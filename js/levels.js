@@ -71,8 +71,21 @@ const LEVELS = [
       "Las líneas se ejecutan en orden. Una orden por línea.",
     hint:
       'print("Hola, soy Aldric")\nhero.move_right()\nhero.move_right()',
-    starterCode:
-      '# Misión: di algo con print y avanza hasta la puerta.\n# Las líneas que empiezan con # son COMENTARIOS — Python las ignora.\n# Escribe tu código DEBAJO de este comentario.\n\n',
+    strategy:
+      "PASO 1 — Habla. La función print() escribe en la consola lo que pongas\n" +
+      "         entre paréntesis. Si pasas un texto, ponlo entre comillas\n" +
+      "         (dobles \" o simples ', tú eliges).\n" +
+      "\n" +
+      "PASO 2 — Camina. Cada llamada a hero.move_right() avanza una casilla\n" +
+      "         a la derecha. Necesitas avanzar HASTA la puerta — mira el\n" +
+      "         briefing para saber cuántas casillas son.\n" +
+      "\n" +
+      "PASO 3 — El orden importa. Las líneas se ejecutan de arriba a abajo,\n" +
+      "         una a una. Habla primero, anda después.",
+    skeleton:
+      'print("[TODO: lo que tu héroe diga, entre comillas]")\n' +
+      'hero.move_right()\n' +
+      'hero.move_right()',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 3, y: 4 },
     enemies: [], gems: [],
@@ -98,8 +111,19 @@ const LEVELS = [
       "(Pista: tu antiguo amigo Ctrl+C / Ctrl+V copia y pega líneas).",
     hint:
       'hero.move_right()\nhero.move_right()\nhero.move_right()\nhero.move_right()',
-    starterCode:
-      '# Avanza 4 casillas a la derecha.\n# (Sin print, solo movimiento.)\n\n',
+    strategy:
+      "PASO 1 — Cuenta las casillas que separan al héroe de la puerta. Mira\n" +
+      "         el briefing — son 4.\n" +
+      "\n" +
+      "PASO 2 — Llama a hero.move_right() una vez por cada casilla. Una\n" +
+      "         línea por llamada.\n" +
+      "\n" +
+      "PASO 3 — En el siguiente capítulo verás cómo evitar repetir la misma\n" +
+      "         línea N veces — los bucles for. Por ahora, paciencia.",
+    skeleton:
+      'hero.move_right()\n' +
+      'hero.move_right()\n' +
+      '[TODO: ¿cuántas líneas más necesitas? Mira el briefing]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 5, y: 4 },
     enemies: [], gems: [],
@@ -132,8 +156,28 @@ const LEVELS = [
       "3) Avanza 3 casillas hasta la puerta.",
     hint:
       'nombre = "Aldric"\nprint(nombre)\nhero.move_right()\nhero.move_right()\nhero.move_right()',
-    starterCode:
-      '# 1. Crea una variable: nombre = "..."\n# 2. Imprímela con print(nombre)\n# 3. Avanza 3 casillas\n\n',
+    strategy:
+      "PASO 1 — Crea una variable que guarde tu nombre. Sintaxis:\n" +
+      "             nombre = \"el-nombre-que-elijas\"\n" +
+      "         El operador = ASIGNA: pone el valor a la derecha dentro del\n" +
+      "         nombre a la izquierda.\n" +
+      "\n" +
+      "PASO 2 — Imprime la VARIABLE, no el texto. La diferencia clave:\n" +
+      "             print(\"nombre\")    → imprime la palabra \"nombre\"\n" +
+      "             print(nombre)      → imprime el VALOR de la variable\n" +
+      "         Sin comillas dentro del print en este caso.\n" +
+      "\n" +
+      "PASO 3 — Avanza 3 casillas con 3 líneas hero.move_right().",
+    skeleton:
+      '# 1. Variable: el nombre va entre comillas\n' +
+      'nombre = "[TODO: tu nombre]"\n' +
+      '\n' +
+      '# 2. Imprimir la variable (SIN comillas — usamos la variable, no el texto)\n' +
+      'print([TODO: la variable, sin comillas])\n' +
+      '\n' +
+      '# 3. Avanzar 3 casillas\n' +
+      'hero.move_right()\n' +
+      '[TODO: 2 líneas más]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 4, y: 4 },
     enemies: [], gems: [],
@@ -169,8 +213,31 @@ const LEVELS = [
       "3) Avanza 5 casillas hasta la puerta.",
     hint:
       'pasos = 2 + 3\nprint("Voy a dar " + str(pasos) + " pasos")\nhero.move_right()\n# repite hero.move_right() las veces necesarias',
-    starterCode:
-      '# 1. Calcula pasos = 2 + 3 (resultado: 5)\n# 2. Imprime: "Voy a dar 5 pasos" (concatena con str())\n# 3. Avanza 5 casillas\n\n',
+    strategy:
+      "PASO 1 — Calcula. Asigna a una variable pasos el resultado de 2 + 3.\n" +
+      "         Python sabe matemáticas:\n" +
+      "             +  -  *  /     suma, resta, multiplicación, división\n" +
+      "             %             módulo (resto de la división)\n" +
+      "             //            división entera\n" +
+      "\n" +
+      "PASO 2 — Concatena. Para juntar texto y número en un mismo string\n" +
+      "         con el operador +, hay un problema: Python NO permite sumar\n" +
+      "         texto + número directamente (eso da TypeError).\n" +
+      "         Solución: convierte el número a texto con str(numero).\n" +
+      "             \"Tengo \" + str(edad) + \" años\"\n" +
+      "         (En Cap 2 verás f-strings, una forma más limpia.)\n" +
+      "\n" +
+      "PASO 3 — Avanza tantas casillas como el resultado del cálculo.",
+    skeleton:
+      '# 1. Calcular y guardar en una variable\n' +
+      'pasos = 2 [TODO: operador +] 3\n' +
+      '\n' +
+      '# 2. Imprimir mensaje. Convertir el número a texto con str()\n' +
+      'print("Voy a dar " + [TODO: str(...) sobre la variable pasos] + " pasos")\n' +
+      '\n' +
+      '# 3. Avanzar el número de casillas calculado\n' +
+      'hero.move_right()\n' +
+      '[TODO: el resto de líneas hero.move_right()]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 6, y: 4 },
     enemies: [], gems: [],
@@ -252,8 +319,26 @@ const LEVELS = [
       "estilo \"Aldric tiene 3 vidas\". Después llega a la puerta.",
     hint:
       'nombre = "Aldric"\nvida = 3\nprint(f"{nombre} tiene {vida} vidas")\nhero.move_right()  # x N',
-    starterCode:
-      '# Usa una f-string: f"{variable}" sustituye el nombre por su valor.\n# Define al menos 2 variables y úsalas en una f-string.\n# Después avanza hasta la puerta.\n\n',
+    strategy:
+      "PASO 1 — Crea dos variables (las que quieras): un string para el\n" +
+      "         nombre y un número para la vida.\n" +
+      "\n" +
+      "PASO 2 — Imprime con una f-string. La sintaxis: empieza el string con\n" +
+      "         f\" y mete las variables entre llaves { }.\n" +
+      "             f\"Hola {nombre}, tienes {vida} vidas\"\n" +
+      "         Compara con la versión vieja del nivel anterior:\n" +
+      "             \"Hola \" + nombre + \", tienes \" + str(vida) + \" vidas\"\n" +
+      "         La f-string es mucho más limpia y ESCRIBES MENOS.\n" +
+      "\n" +
+      "PASO 3 — Avanza hasta la puerta.",
+    skeleton:
+      'nombre = "[TODO: cualquier nombre]"\n' +
+      'vida = [TODO: un número]\n' +
+      '\n' +
+      '# f-string: prefijo f" — variables entre {}\n' +
+      'print([TODO: f"...{nombre}...{vida}..."])\n' +
+      '\n' +
+      '[TODO: avanzar hasta la puerta]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 5, y: 4 },
     enemies: [], gems: [],
@@ -291,8 +376,31 @@ const LEVELS = [
       "4) Avanza hasta la puerta.",
     hint:
       'inventario = ["espada", "pocion", "mapa", "oro"]\nprint(len(inventario))\nprint(inventario[0])\nhero.move_right()  # x N',
-    starterCode:
-      '# 1. Crea una lista con 4 elementos\n# 2. print(len(...))\n# 3. print(...[0])\n# 4. Avanza\n\n',
+    strategy:
+      "PASO 1 — Crea una lista. Sintaxis: corchetes [] con valores separados\n" +
+      "         por comas. Strings entre comillas. Mínimo 4 elementos.\n" +
+      "             inventario = [\"espada\", \"pocion\", \"mapa\", \"oro\"]\n" +
+      "\n" +
+      "PASO 2 — Cuenta cuántos hay con len(lista). Devuelve un entero.\n" +
+      "         print(len(inventario)) imprime ese número.\n" +
+      "\n" +
+      "PASO 3 — Accede al primer elemento. En Python los índices empiezan\n" +
+      "         en 0 (no en 1). El primer elemento es lista[0]. El último es\n" +
+      "         lista[-1]. Imprime el primero.\n" +
+      "\n" +
+      "PASO 4 — Avanza hasta la puerta.",
+    skeleton:
+      '# 1. Lista entre corchetes\n' +
+      'inventario = [TODO: 4 strings entre comillas separados por comas]\n' +
+      '\n' +
+      '# 2. Tamaño de la lista\n' +
+      'print(len([TODO: la lista]))\n' +
+      '\n' +
+      '# 3. Primer elemento (índice 0)\n' +
+      'print([TODO: la lista][0])\n' +
+      '\n' +
+      '# 4. Avanzar hasta la puerta\n' +
+      '[TODO: hero.move_right() las veces necesarias]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 6, y: 4 },
     enemies: [], gems: [],
@@ -327,8 +435,29 @@ const LEVELS = [
       "for, imprimiendo cada uno. Después avanza hasta la puerta.",
     hint:
       'hechizos = ["fuego", "hielo", "rayo"]\nfor h in hechizos:\n    print(h)\nhero.move_right()  # x N',
-    starterCode:
-      '# Define una lista. Recórrela con for. Avanza.\n\n',
+    strategy:
+      "PASO 1 — Define una lista de hechizos con al menos 3 strings.\n" +
+      "\n" +
+      "PASO 2 — Recórrela con un bucle for:\n" +
+      "             for variable in lista:\n" +
+      "                 (línea indentada con lo que hagas)\n" +
+      "         La variable toma cada valor de la lista, una vez por\n" +
+      "         iteración. La indentación (4 espacios) es OBLIGATORIA — es\n" +
+      "         lo que dice a Python qué pertenece al bucle.\n" +
+      "\n" +
+      "PASO 3 — Dentro del for, imprime la variable.\n" +
+      "\n" +
+      "PASO 4 — Después del for (sin indentar), avanza al exit.",
+    skeleton:
+      'hechizos = [TODO: lista con al menos 3 strings]\n' +
+      '\n' +
+      '# for variable in lista:\n' +
+      'for [TODO: nombre de variable] in [TODO: la lista]:\n' +
+      '    # 4 espacios al inicio = dentro del bucle\n' +
+      '    print([TODO: la variable])\n' +
+      '\n' +
+      '# Sin indentar = después del bucle\n' +
+      '[TODO: avanzar hasta la puerta]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 5, y: 4 },
     enemies: [], gems: [],
@@ -361,8 +490,22 @@ const LEVELS = [
       "Avanza 7 casillas a la derecha usando for con range. Una sola " +
       "llamada a hero.move_right() dentro del bucle.",
     hint: 'for i in range(7):\n    hero.move_right()',
-    starterCode:
-      '# Avanza 7 casillas usando for + range. Solo 2 líneas.\n\n',
+    strategy:
+      "PASO 1 — range(N) genera la secuencia 0, 1, 2, ..., N-1.\n" +
+      "         range(7) → 0, 1, 2, 3, 4, 5, 6 (siete números).\n" +
+      "\n" +
+      "PASO 2 — Combinarlo con for da un bucle que se repite N veces:\n" +
+      "             for i in range(7):\n" +
+      "                 hero.move_right()\n" +
+      "         La variable i toma cada valor de la secuencia. Si NO la usas\n" +
+      "         dentro del bucle, da igual su nombre — pero hay que ponerla.\n" +
+      "\n" +
+      "PASO 3 — Solo dos líneas y avanzas 7 veces. Compara con escribir\n" +
+      "         hero.move_right() siete veces — feo.",
+    skeleton:
+      '# for i in range(N) — repite N veces\n' +
+      'for i in range([TODO: el número de casillas]):\n' +
+      '    [TODO: la línea que se repite, indentada con 4 espacios]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 8, y: 4 },
     enemies: [], gems: [],
@@ -443,8 +586,24 @@ const LEVELS = [
       "Recuerda: el nombre va entre comillas dentro de attack().",
     hint:
       'hero.attack("Krug")\nhero.attack("Krug")\nfor i in range(9):\n    hero.move_right()',
-    starterCode:
-      '# Derrota a Krug (HP 2) con hero.attack("Krug")\n# Después avanza usando un for + range\n\n',
+    strategy:
+      "PASO 1 — Atacar a Krug. La función hero.attack() necesita un dato:\n" +
+      "         a quién atacar. Ese dato (el ARGUMENTO) va dentro de los\n" +
+      "         paréntesis. Como Krug es un nombre, va entre comillas:\n" +
+      "             hero.attack(\"Krug\")\n" +
+      "         Krug aguanta 2 golpes — necesitas 2 ataques.\n" +
+      "\n" +
+      "PASO 2 — Una vez muerto, avanza hasta la puerta. Aprovecha el for+range\n" +
+      "         que aprendiste en el nivel anterior para no escribir 9 veces\n" +
+      "         hero.move_right().",
+    skeleton:
+      '# Atacar a Krug — el nombre va entre comillas (es ARGUMENTO string)\n' +
+      'hero.attack([TODO: "Krug"])\n' +
+      'hero.attack("Krug")    # un segundo ataque (HP 2)\n' +
+      '\n' +
+      '# Avanzar hasta la puerta con for + range\n' +
+      'for i in range([TODO: número de casillas hasta la puerta]):\n' +
+      '    hero.move_right()',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [{ name: "Krug", type: "ogre", x: 5, y: 4, hp: 2 }],
@@ -479,8 +638,35 @@ const LEVELS = [
       "su nombre, derrótalo, y llega a la puerta.",
     hint:
       'e = hero.find_nearest_enemy()\nprint(f"Encontré a {e}")\nhero.attack(e)\nhero.attack(e)\nfor i in range(9):\n    hero.move_right()',
-    starterCode:
-      '# 1. Guarda find_nearest_enemy() en una variable\n# 2. Imprímela (con f-string mejor)\n# 3. Atácalo 2 veces (HP 2)\n# 4. Avanza\n\n',
+    strategy:
+      "PASO 1 — find_nearest_enemy() te DEVUELVE el nombre del enemigo más\n" +
+      "         cercano. Tienes que GUARDAR ese resultado en una variable\n" +
+      "         para reutilizarlo:\n" +
+      "             e = hero.find_nearest_enemy()\n" +
+      "\n" +
+      "PASO 2 — Imprime el nombre. Ya tienes la variable, úsala. Mejor aún\n" +
+      "         con f-string: f\"Encontré a {e}\".\n" +
+      "\n" +
+      "PASO 3 — Atácalo. AQUÍ EL DETALLE CLAVE:\n" +
+      "             hero.attack(\"Krug\")  ← \"Krug\" es un literal: comillas\n" +
+      "             hero.attack(e)        ← e ya CONTIENE el string: SIN comillas\n" +
+      "         La variable ya guarda el texto — no le pongas comillas extras.\n" +
+      "         HP 2 → necesitas 2 ataques.\n" +
+      "\n" +
+      "PASO 4 — Avanza al exit con for + range.",
+    skeleton:
+      '# 1. Guardar el resultado de find_nearest_enemy en una variable\n' +
+      'e = hero.[TODO: método para encontrar al enemigo más cercano]()\n' +
+      '\n' +
+      '# 2. Imprimir el nombre — la variable ya contiene el string\n' +
+      'print([TODO: f-string que use {e}])\n' +
+      '\n' +
+      '# 3. Atacar 2 veces. La variable e SIN comillas (ya es un string)\n' +
+      'hero.attack([TODO: la variable, sin comillas])\n' +
+      'hero.attack(e)\n' +
+      '\n' +
+      '# 4. Avanzar\n' +
+      '[TODO: for + range]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [{ name: "???", type: "ogre", x: 5, y: 4, hp: 2 }],
@@ -514,8 +700,36 @@ const LEVELS = [
       "que lo has matado. Si es None, imprime que no había. Después avanza.",
     hint:
       'e = hero.find_nearest_enemy()\nif e is None:\n    print("sala vacía")\nelse:\n    print(f"atacando a {e}")\n    hero.attack(e)\nfor i in range(9):\n    hero.move_right()',
-    starterCode:
-      '# Usa if/else para decidir según find_nearest_enemy()\n\n',
+    strategy:
+      "PASO 1 — Guarda en una variable el resultado de find_nearest_enemy().\n" +
+      "         Puede devolver un nombre... o None si la sala está vacía.\n" +
+      "\n" +
+      "PASO 2 — Decide con un if. La sintaxis:\n" +
+      "             if condicion:\n" +
+      "                 (líneas indentadas — qué hacer si la condición es True)\n" +
+      "             else:\n" +
+      "                 (líneas indentadas — qué hacer si NO)\n" +
+      "         Reglas estrictas:\n" +
+      "         - Dos puntos al final del if y del else.\n" +
+      "         - Indentación de 4 espacios para las líneas dentro.\n" +
+      "         - Para comparar con None se usa `is None` (no ==).\n" +
+      "\n" +
+      "PASO 3 — Si NO es None, atácalo (HP 1, un solo ataque).\n" +
+      "         Si es None, imprime que no había enemigos.\n" +
+      "\n" +
+      "PASO 4 — Avanza al exit (esto va FUERA del if/else, sin indentar).",
+    skeleton:
+      'e = hero.find_nearest_enemy()\n' +
+      '\n' +
+      '# if con dos puntos. Indenta el bloque interior.\n' +
+      'if e [TODO: operador para comparar con None] None:\n' +
+      '    print("sala vacía")\n' +
+      'else:\n' +
+      '    print(f"atacando a {e}")\n' +
+      '    hero.attack(e)\n' +
+      '\n' +
+      '# Sin indentar — fuera del if/else\n' +
+      '[TODO: avanzar al exit con for + range]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [{ name: "Eco", type: "skeleton", x: 5, y: 4, hp: 1 }],
@@ -555,8 +769,39 @@ const LEVELS = [
       "(sin bucle while todavía).",
     hint:
       'e = hero.find_nearest_enemy()\nif e == "Bones":\n    hero.attack(e)\nelse:\n    for i in range(3):\n        hero.attack(e)\n\n# Repite el bloque para el segundo enemigo\n\nfor i in range(9):\n    hero.move_right()',
-    starterCode:
-      '# Para cada enemigo, comprueba su nombre con == y ataca apropiadamente.\n# Hazlo dos veces (uno por enemigo).\n\n',
+    strategy:
+      "PASO 1 — Encuentra al enemigo más cercano y guárdalo en una variable.\n" +
+      "\n" +
+      "PASO 2 — Compara su nombre. AQUÍ EL ERROR CLÁSICO:\n" +
+      "             =   asigna   (e = \"X\" pone \"X\" dentro de e)\n" +
+      "             ==  compara  (e == \"X\" devuelve True/False)\n" +
+      "         Para comparar siempre dos iguales seguidos.\n" +
+      "\n" +
+      "PASO 3 — Decide:\n" +
+      "             if e == \"Bones\": atacar 1 vez\n" +
+      "             else: (es Throg) atacar 3 veces — usa for+range dentro\n" +
+      "\n" +
+      "PASO 4 — Repite TODO el bloque (find + if/else) para el segundo\n" +
+      "         enemigo. Cuando matas al primero, find_nearest_enemy()\n" +
+      "         devolverá el segundo.\n" +
+      "\n" +
+      "PASO 5 — Avanza al exit.",
+    skeleton:
+      '# ----- Primer enemigo -----\n' +
+      'e = hero.find_nearest_enemy()\n' +
+      '\n' +
+      '# Comparar con DOBLE igual: e [TODO: operador comparación] "Bones"\n' +
+      'if e == "Bones":\n' +
+      '    hero.attack(e)\n' +
+      'else:\n' +
+      '    # Throg necesita 3 ataques — usa for + range\n' +
+      '    [TODO: bucle for que ataque 3 veces]\n' +
+      '\n' +
+      '# ----- Segundo enemigo (mismo patrón) -----\n' +
+      '[TODO: repetir el bloque anterior — find + if/else]\n' +
+      '\n' +
+      '# ----- Avanzar -----\n' +
+      '[TODO: for + range hasta el exit]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [
@@ -661,8 +906,43 @@ const LEVELS = [
       "Por ahora hazlo manualmente, 3 veces.",
     hint:
       'e = hero.find_nearest_enemy()\nif e == "Bones":\n    hero.attack(e)\nelif e == "Krug":\n    for i in range(2): hero.attack(e)\nelse:\n    for i in range(3): hero.attack(e)\n\n# Repite 2 veces más\n\nfor i in range(9):\n    hero.move_right()',
-    starterCode:
-      '# Usa if/elif/else según el nombre del enemigo.\n# Hazlo 3 veces (una por enemigo).\n\n',
+    strategy:
+      "PASO 1 — elif es \"else if\". Te permite añadir más ramas a un\n" +
+      "         condicional sin anidar:\n" +
+      "             if condición1:\n" +
+      "                 ...\n" +
+      "             elif condición2:\n" +
+      "                 ...   ← se evalúa solo si condición1 era False\n" +
+      "             else:\n" +
+      "                 ...   ← si NINGUNA anterior fue True\n" +
+      "         Solo se ejecuta UNA rama.\n" +
+      "\n" +
+      "PASO 2 — Para cada enemigo, encuentra el más cercano y compara su\n" +
+      "         nombre:\n" +
+      "             Bones → 1 ataque (skeleton)\n" +
+      "             Krug  → 2 ataques (ogro)\n" +
+      "             Throg → 3 ataques (troll)\n" +
+      "         Para 2 o 3 ataques, usa for + range dentro del bloque.\n" +
+      "\n" +
+      "PASO 3 — Repite el bloque 3 veces (uno por enemigo). En el siguiente\n" +
+      "         nivel verás cómo no repetir con while True.\n" +
+      "\n" +
+      "PASO 4 — Avanza al exit.",
+    skeleton:
+      '# Bloque para UN enemigo — repite 3 veces variando solo si hace falta\n' +
+      'e = hero.find_nearest_enemy()\n' +
+      'if e == "Bones":\n' +
+      '    hero.attack(e)\n' +
+      '[TODO: elif para "Krug" — 2 ataques con for+range]\n' +
+      'else:\n' +
+      '    # Throg, 3 ataques\n' +
+      '    [TODO: for + range de 3 ataques]\n' +
+      '\n' +
+      '# Repite el bloque entero 2 veces más\n' +
+      '[TODO: copia y pega — 2 veces]\n' +
+      '\n' +
+      '# Avanzar\n' +
+      '[TODO: for + range hasta el exit]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [
@@ -708,8 +988,35 @@ const LEVELS = [
       "3) Comprueba después con valores incorrectos para entender qué pasa.",
     hint:
       'nombre = "Aldric"\nrango = "mago"\nif nombre == "Aldric" and rango == "mago":\n    print("autorizado")\n    for i in range(7):\n        hero.move_right()\nelse:\n    print("denegado")',
-    starterCode:
-      '# Define nombre y rango. Comprueba con and. Decide.\n\n',
+    strategy:
+      "PASO 1 — Define dos variables: nombre y rango.\n" +
+      "\n" +
+      "PASO 2 — Operadores lógicos:\n" +
+      "             and  → True si AMBOS lados son True\n" +
+      "             or   → True si AL MENOS UNO es True\n" +
+      "             not  → invierte (de True a False y viceversa)\n" +
+      "         Aquí necesitas AND porque tienen que cumplirse las DOS\n" +
+      "         condiciones (nombre correcto Y rango correcto).\n" +
+      "\n" +
+      "PASO 3 — Estructura del if:\n" +
+      "             if nombre == \"Aldric\" and rango == \"mago\":\n" +
+      "                 (autorizado: imprime y avanza)\n" +
+      "             else:\n" +
+      "                 (denegado: imprime, NO te muevas)\n" +
+      "         Solo un if/else, no un and seguido de otro if.\n" +
+      "\n" +
+      "PASO 4 — Después de probar con valores válidos, prueba a cambiar el\n" +
+      "         rango por \"aprendiz\". Verás que el portero te deniega.",
+    skeleton:
+      'nombre = "[TODO: Aldric]"\n' +
+      'rango = "[TODO: mago]"\n' +
+      '\n' +
+      '# Combinar dos comparaciones con AND\n' +
+      'if nombre == "Aldric" [TODO: operador lógico AND] rango == "mago":\n' +
+      '    print("autorizado")\n' +
+      '    [TODO: avanzar al exit]\n' +
+      'else:\n' +
+      '    print("denegado")',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 8, y: 4 },
     enemies: [], gems: [],
@@ -747,8 +1054,32 @@ const LEVELS = [
       "while True que use find_nearest y break. Después llega a la puerta.",
     hint:
       'while True:\n    e = hero.find_nearest_enemy()\n    if e is None:\n        break\n    hero.attack(e)\nfor i in range(9):\n    hero.move_right()',
-    starterCode:
-      '# Usa un solo while True para matarlos a todos.\n# Recuerda el break.\n\n',
+    strategy:
+      "PASO 1 — while True repite siempre. Para que NO sea infinito, dentro\n" +
+      "         del bucle tienes que llegar a un punto donde uses break,\n" +
+      "         que sale del bucle inmediatamente.\n" +
+      "\n" +
+      "PASO 2 — Patrón típico para 'haz mientras quede algo':\n" +
+      "             while True:\n" +
+      "                 e = hero.find_nearest_enemy()\n" +
+      "                 if e is None:    ← cuando no quedan enemigos\n" +
+      "                     break        ← salimos del bucle\n" +
+      "                 hero.attack(e)   ← si lo hay, atacar\n" +
+      "         Cada iteración busca un enemigo nuevo. Cuando find_nearest\n" +
+      "         devuelve None, ya no quedan, y rompemos.\n" +
+      "\n" +
+      "PASO 3 — Después del while (sin indentar), avanza al exit.",
+    skeleton:
+      'while True:\n' +
+      '    e = hero.find_nearest_enemy()\n' +
+      '    # Si ya no hay enemigos, salimos\n' +
+      '    if e [TODO: operador para comparar con None] None:\n' +
+      '        [TODO: keyword para SALIR del bucle]\n' +
+      '    # Si lo hay, atacarlo\n' +
+      '    hero.attack(e)\n' +
+      '\n' +
+      '# Sin indentar — fuera del while\n' +
+      '[TODO: avanzar al exit]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [
@@ -789,8 +1120,24 @@ const LEVELS = [
       "Avanza hasta la puerta usando while not hero.is_at_exit() y " +
       "hero.move_right() dentro. Solo 2 líneas.",
     hint: 'while not hero.is_at_exit():\n    hero.move_right()',
-    starterCode:
-      '# Usa while con la condición not hero.is_at_exit()\n# Solo 2 líneas.\n\n',
+    strategy:
+      "PASO 1 — while puede usar cualquier condición, no solo True. Aquí\n" +
+      "         hero.is_at_exit() devuelve True si estás en la puerta.\n" +
+      "\n" +
+      "PASO 2 — La condición que necesitas: 'mientras NO esté en la puerta'.\n" +
+      "         Eso se escribe con not:\n" +
+      "             while not hero.is_at_exit():\n" +
+      "                 hero.move_right()\n" +
+      "\n" +
+      "PASO 3 — Compara con while True + break del nivel anterior. Esta\n" +
+      "         versión es más elegante: la condición misma decide cuándo\n" +
+      "         parar, sin necesidad de break.\n" +
+      "\n" +
+      "PASO 4 — Solo 2 líneas. Si te ves usando break, simplifica.",
+    skeleton:
+      '# while con condición declarativa: "mientras NO esté en la salida"\n' +
+      'while [TODO: not + hero.is_at_exit()]:\n' +
+      '    hero.move_right()',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [], gems: [],
@@ -880,8 +1227,37 @@ const LEVELS = [
       "el dict y atácalo esa cantidad. Llega a la puerta.",
     hint:
       'golpes = {"Bones": 1, "Throg": 3}\nwhile True:\n    e = hero.find_nearest_enemy()\n    if e is None:\n        break\n    for i in range(golpes[e]):\n        hero.attack(e)\nwhile not hero.is_at_exit():\n    hero.move_right()',
-    starterCode:
-      '# Define un dict con los golpes necesarios por enemigo.\n# Úsalo dentro del bucle: golpes[e] te da el número correcto.\n\n',
+    strategy:
+      "PASO 1 — Diccionario: estructura clave→valor con llaves { }.\n" +
+      "             golpes = {\"Bones\": 1, \"Throg\": 3}\n" +
+      "         Acceso por clave: golpes[\"Bones\"] devuelve 1.\n" +
+      "         Si la clave no existe → KeyError.\n" +
+      "\n" +
+      "PASO 2 — Combina dict + bucle del nivel anterior:\n" +
+      "             while True:\n" +
+      "                 e = hero.find_nearest_enemy()\n" +
+      "                 if e is None: break\n" +
+      "                 for i in range(golpes[e]):\n" +
+      "                     hero.attack(e)\n" +
+      "         Cuando atacas a Bones, golpes[\"Bones\"] = 1 → 1 ataque.\n" +
+      "         Cuando atacas a Throg, golpes[\"Throg\"] = 3 → 3 ataques.\n" +
+      "\n" +
+      "PASO 3 — Avanza al exit con while not hero.is_at_exit().",
+    skeleton:
+      '# Diccionario clave→valor\n' +
+      'golpes = {[TODO: "Bones": 1], "Throg": 3}\n' +
+      '\n' +
+      '# Mismo bucle de combate, pero el número de ataques sale del dict\n' +
+      'while True:\n' +
+      '    e = hero.find_nearest_enemy()\n' +
+      '    if e is None:\n' +
+      '        break\n' +
+      '    # for que repite golpes[e] veces\n' +
+      '    for i in range([TODO: acceso al dict por clave e]):\n' +
+      '        hero.attack(e)\n' +
+      '\n' +
+      '# Avanzar\n' +
+      '[TODO: while not hero.is_at_exit()]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [
@@ -923,8 +1299,32 @@ const LEVELS = [
       "puerta a 6 casillas.",
     hint:
       'def avanzar():\n    hero.move_right()\n    hero.move_right()\n    hero.move_right()\n\navanzar()\navanzar()',
-    starterCode:
-      '# Define avanzar() con 3 hero.move_right().\n# Llámala dos veces.\n\n',
+    strategy:
+      "PASO 1 — Definir una función:\n" +
+      "             def nombre():\n" +
+      "                 (líneas indentadas con lo que hace)\n" +
+      "         La palabra clave es def. Los () están vacíos (sin argumentos\n" +
+      "         por ahora). Dos puntos al final. Las líneas dentro indentadas\n" +
+      "         con 4 espacios.\n" +
+      "\n" +
+      "PASO 2 — Define avanzar() con 3 llamadas a hero.move_right() dentro.\n" +
+      "         Esto SOLO define la función — no la ejecuta.\n" +
+      "\n" +
+      "PASO 3 — Llamar a la función: pones su nombre + paréntesis.\n" +
+      "             avanzar()\n" +
+      "         Cada vez que la llamas, ejecuta sus 3 líneas. Llámala 2 veces\n" +
+      "         para llegar a 6 casillas.",
+    skeleton:
+      '# Definir la función con def\n' +
+      '[TODO: keyword def] avanzar():\n' +
+      '    # 4 espacios — dentro de la función\n' +
+      '    hero.move_right()\n' +
+      '    hero.move_right()\n' +
+      '    hero.move_right()\n' +
+      '\n' +
+      '# Llamar 2 veces (sin indentar, fuera de la def)\n' +
+      'avanzar()\n' +
+      '[TODO: segunda llamada]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 7, y: 4 },
     enemies: [], gems: [],
@@ -961,8 +1361,45 @@ const LEVELS = [
       "Krug HP 2, Throg HP 3). Después llega a la puerta.",
     hint:
       'def golpear(enemigo, veces):\n    for i in range(veces):\n        hero.attack(enemigo)\n\ngolpes = {"Bones": 1, "Krug": 2, "Throg": 3}\nwhile True:\n    e = hero.find_nearest_enemy()\n    if e is None:\n        break\n    golpear(e, golpes[e])\n\nwhile not hero.is_at_exit():\n    hero.move_right()',
-    starterCode:
-      '# Define golpear(enemigo, veces).\n# Usa un dict de golpes y un bucle while.\n\n',
+    strategy:
+      "PASO 1 — Define una función con DOS argumentos:\n" +
+      "             def golpear(enemigo, veces):\n" +
+      "                 for i in range(veces):\n" +
+      "                     hero.attack(enemigo)\n" +
+      "         Los nombres entre paréntesis son PARÁMETROS — variables\n" +
+      "         que reciben valores cuando llamas la función. Dentro del\n" +
+      "         cuerpo, los usas como variables normales.\n" +
+      "\n" +
+      "PASO 2 — Llamar: pasas valores en el mismo orden que los parámetros.\n" +
+      "             golpear(\"Krug\", 2)\n" +
+      "         \"Krug\" se asigna a enemigo, 2 se asigna a veces.\n" +
+      "\n" +
+      "PASO 3 — Combina con el dict del nivel anterior y el bucle:\n" +
+      "             golpes = {\"Bones\": 1, \"Krug\": 2, \"Throg\": 3}\n" +
+      "             while True:\n" +
+      "                 e = hero.find_nearest_enemy()\n" +
+      "                 if e is None: break\n" +
+      "                 golpear(e, golpes[e])\n" +
+      "\n" +
+      "PASO 4 — Avanza al exit con while + is_at_exit.",
+    skeleton:
+      '# Función con argumentos\n' +
+      'def golpear([TODO: enemigo], [TODO: veces]):\n' +
+      '    for i in range(veces):\n' +
+      '        hero.attack(enemigo)\n' +
+      '\n' +
+      '# Dict con los golpes que aguanta cada enemigo\n' +
+      'golpes = {"Bones": 1, "Krug": 2, "Throg": 3}\n' +
+      '\n' +
+      '# Bucle: encuentra y golpea con el número correcto\n' +
+      'while True:\n' +
+      '    e = hero.find_nearest_enemy()\n' +
+      '    if e is None:\n' +
+      '        break\n' +
+      '    golpear([TODO: el enemigo], [TODO: golpes[e] — los golpes que aguanta])\n' +
+      '\n' +
+      '# Avanzar\n' +
+      '[TODO: while not hero.is_at_exit()]',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 10, y: 4 },
     enemies: [
@@ -1004,8 +1441,39 @@ const LEVELS = [
       "4) Avanza esa cantidad de casillas (4) hasta la puerta.",
     hint:
       'def dado_de(n):\n    return n * 2\n\ncuantos = dado_de(2)\nprint(cuantos)\nfor i in range(cuantos):\n    hero.move_right()',
-    starterCode:
-      '# Define una función con return. Úsala. Avanza según el resultado.\n\n',
+    strategy:
+      "PASO 1 — return hace que la función DEVUELVA un valor. Sintaxis:\n" +
+      "             def doble(n):\n" +
+      "                 return n * 2\n" +
+      "         Después de la palabra return va lo que la función devuelve.\n" +
+      "         Cuando se ejecuta el return, la función TERMINA — el código\n" +
+      "         posterior dentro de la función no se ejecuta.\n" +
+      "\n" +
+      "PASO 2 — Captura el valor devuelto en una variable:\n" +
+      "             cuantos = doble(2)   ← cuantos vale 4\n" +
+      "         O úsalo directamente:\n" +
+      "             print(doble(5))      ← imprime 10\n" +
+      "\n" +
+      "PASO 3 — La diferencia con las funciones del nivel anterior:\n" +
+      "         Antes la función HACÍA cosas (atacar, mover).\n" +
+      "         Ahora la función CALCULA un valor y te lo devuelve.\n" +
+      "         Si una función no tiene return, devuelve None.\n" +
+      "\n" +
+      "PASO 4 — Define dado_de(n) que devuelve n*2. Llámala con argumento\n" +
+      "         2, guarda el resultado, imprímelo y avanza esa cantidad de\n" +
+      "         casillas con for+range.",
+    skeleton:
+      '# Función que CALCULA y devuelve un valor\n' +
+      'def dado_de(n):\n' +
+      '    [TODO: keyword para devolver] n * 2\n' +
+      '\n' +
+      '# Llamar y capturar el resultado\n' +
+      'cuantos = dado_de(2)\n' +
+      'print([TODO: la variable])\n' +
+      '\n' +
+      '# Avanzar esa cantidad de casillas\n' +
+      'for i in range(cuantos):\n' +
+      '    hero.move_right()',
     map: emptyMap(),
     hero: { x: 1, y: 4 }, exit: { x: 5, y: 4 },
     enemies: [], gems: [],
