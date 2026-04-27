@@ -104,15 +104,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
   document.getElementById('next-level').addEventListener('click', () => {
     if (game.playing) return;
-    if (currentLevel >= LEVELS.length - 1) return;
-    const max = parseInt(localStorage.getItem(STORAGE.maxLevel) || '0', 10);
-    const nextLvl = LEVELS[currentLevel + 1];
-    // Bloqueado si el siguiente nivel está por encima del progreso del jugador
-    if (nextLvl.id > max + 1) {
-      log('Esa operación está bloqueada — completa la actual primero.', 'err');
-      return;
-    }
-    loadLevelByIndex(currentLevel + 1, false);
+    if (currentLevel < LEVELS.length - 1) loadLevelByIndex(currentLevel + 1, false);
   });
   // 4-tier hints
   document.querySelectorAll('.tier-btn').forEach(btn => {
@@ -556,10 +548,10 @@ function buildLevelSelectUI() {
     chapterLevels.forEach(lvl => {
       const idx = LEVELS.indexOf(lvl);
       const completed = lvl.id <= max;
-      const locked = idx > 0 && idx > max;
       const isExam = lvl.is_exam;
+      // Todos los niveles accesibles desde el selector — sin gating por progreso
       const card = document.createElement('div');
-      card.className = 'level-card' + (locked ? ' locked' : '') + (completed ? ' completed' : '') + (isExam ? ' exam' : '');
+      card.className = 'level-card' + (completed ? ' completed' : '') + (isExam ? ' exam' : '');
       card.innerHTML = `
         ${completed ? '<span class="check">✓</span>' : ''}
         <div class="num">${isExam ? '⚠ EXAMEN ' : 'NIVEL '}${lvl.id}</div>
@@ -567,9 +559,7 @@ function buildLevelSelectUI() {
         <div class="loc">${escapeHtml(lvl.location)}</div>
         <span class="concept">${escapeHtml(lvl.concept)}</span>
       `;
-      if (!locked) {
-        card.addEventListener('click', () => loadLevelByIndex(idx, true));
-      }
+      card.addEventListener('click', () => loadLevelByIndex(idx, true));
       cards.appendChild(card);
     });
 
@@ -664,15 +654,9 @@ function loadLevelByIndex(idx, showIntro = false) {
   log(`Nivel ${lvl.id}: ${lvl.title}`, 'info');
   log(`Lugar: ${lvl.location}`, 'log');
 
-  const maxCompleted = parseInt(localStorage.getItem(STORAGE.maxLevel) || '0', 10);
-  const nextLvl = LEVELS[idx + 1];
   document.getElementById('prev-level').disabled = (idx === 0);
-  document.getElementById('next-level').disabled =
-    (idx === LEVELS.length - 1) || (nextLvl && nextLvl.id > maxCompleted + 1);
-  document.getElementById('next-level').title =
-    (nextLvl && nextLvl.id > maxCompleted + 1)
-      ? 'Bloqueada — completa esta operación primero'
-      : 'Operación siguiente';
+  document.getElementById('next-level').disabled = (idx === LEVELS.length - 1);
+  document.getElementById('next-level').title = 'Siguiente nivel';
 
   localStorage.setItem(STORAGE.lastLevel, String(idx));
 
