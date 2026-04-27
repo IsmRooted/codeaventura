@@ -725,25 +725,74 @@ html, body {
 }
 #level-nav button:disabled { opacity: 0.30; cursor: not-allowed; }
 
+/* Tamaños redimensionables (drag de los splitters).
+   Defaults equivalentes a los del diseño original. */
+:root {
+  --left-w: 440px;
+  --mission-h: 42vh;
+}
+
 #screen-game main {
   display: grid;
-  grid-template-columns: 440px 1fr;
+  grid-template-columns: var(--left-w) 6px 1fr;
   overflow: hidden;
 }
 
+/* === Splitters === */
+.splitter {
+  background: var(--border-default);
+  position: relative;
+  z-index: 5;
+  transition: background 0.15s var(--ease);
+}
+.splitter:hover,
+.splitter.dragging {
+  background: var(--warm);
+}
+.splitter-v {
+  cursor: col-resize;
+  height: 100%;
+  width: 6px;
+}
+.splitter-h {
+  cursor: row-resize;
+  width: 100%;
+  height: 6px;
+}
+.splitter::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--text-secondary);
+  opacity: 0.45;
+  border-radius: 1px;
+  pointer-events: none;
+}
+.splitter-v::after { width: 2px; height: 32px; }
+.splitter-h::after { width: 32px; height: 2px; }
+.splitter:hover::after,
+.splitter.dragging::after { opacity: 0.85; background: #0b1320; }
+
+/* === Layout lock — splitters inertes cuando body.layout-locked === */
+body.layout-locked .splitter {
+  cursor: not-allowed;
+  background: var(--border-default);
+  opacity: 0.4;
+}
+body.layout-locked .splitter:hover { background: var(--border-default); }
+body.layout-locked .splitter::after { opacity: 0.25; }
+
 #left-panel {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: var(--mission-h) 6px 1fr auto;
   background: var(--bg-elevated);
-  border-right: 1px solid var(--border-default);
   overflow: hidden;
   min-height: 0;
 }
 
 #mission {
   padding: 18px 22px;
-  border-bottom: 1px solid var(--border-default);
-  max-height: 42vh;
   overflow-y: auto;
   min-height: 0;
 }

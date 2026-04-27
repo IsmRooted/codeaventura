@@ -17,6 +17,9 @@ const STORAGE = {
   // ---- Sistema pedagógico (4-tier hints + cheatsheet)
   hintsSeen: id => `codeaventura_hints_seen_${id}`,
   cheatsheetTab: 'codeaventura_cheatsheet_tab',
+  // ---- Layout
+  splitters: 'codeaventura_splitters',
+  layoutLocked: 'codeaventura_layout_locked',
 };
 
 // Orden canónico de los tiers de pista (de menor a mayor revelación)
@@ -246,6 +249,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     loadLevelByIndex(Math.max(0, cpIdx), false);
     log(`Vuelves al checkpoint (Nivel ${cpId}). Vidas restauradas a ${game.session.maxLives}.`, 'info');
   });
+
+  // Layout: splitters + lock
+  loadSplitterSizes();
+  initSplitters();
+  applyLayoutLock();
+  document.getElementById('layout-lock-btn').addEventListener('click', toggleLayoutLock);
 
   // Pyodide
   setMenuStatus('Cargando Python (Pyodide)... 5-15s la primera vez.');
@@ -604,6 +613,14 @@ function escapeHtml(s) {
   }[c]));
 }
 
+// Plantilla de inicio cuando un nivel no tiene starterCode propio.
+// A propósito mínima: no chiva la solución; las pistas (incluida el
+// skeleton con [TODO]) están en el panel de ayuda por capas.
+function defaultStarter(lvl) {
+  const head = `# Nivel ${lvl.id} — ${lvl.title}\n# Concepto: ${lvl.concept}\n#\n# Tu código aquí. Si te atascas, abre la pista (📖 Teoría → 🧭 Estrategia\n# → 🪜 Esqueleto → 💡 Solución).\n\n`;
+  return head;
+}
+
 // === Navegación entre niveles ===
 function loadLevelByIndex(idx, showIntro = false) {
   currentLevel = idx;
@@ -645,9 +662,9 @@ function loadLevelByIndex(idx, showIntro = false) {
 
   document.getElementById('concept-pill').textContent = lvl.concept;
 
-  // Cargar código (guardado o starter). Si el nivel no define starterCode,
-  // usamos el skeleton del sistema pedagógico como plantilla de partida.
-  const starter = lvl.starterCode ?? lvl.skeleton ?? '';
+  // Cargar código (guardado o starter). El editor arranca con un scaffold
+  // mínimo — el skeleton con [TODO] solo aparece en la capa 3 de pistas.
+  const starter = lvl.starterCode ?? defaultStarter(lvl);
   const savedCode = localStorage.getItem(STORAGE.code(lvl.id));
   cm.setValue(savedCode !== null ? savedCode : starter);
 
@@ -767,7 +784,7 @@ function onReset() {
   if (game.playing) return;
   const lvl = LEVELS[currentLevel];
   if (!confirm('¿Volver al template inicial? Se perderá el código que tienes ahora.')) return;
-  cm.setValue(lvl.starterCode ?? lvl.skeleton ?? '');
+  cm.setValue(lvl.starterCode ?? defaultStarter(lvl));
   localStorage.removeItem(STORAGE.code(lvl.id));
   loadLevel(lvl);
   clearConsole();
@@ -1125,4 +1142,134 @@ function renderGlossaryScreen() {
     const cnt = document.getElementById('glossary-count');
     if (cnt) cnt.textContent = `${stats.total} términos`;
   }
+}
+
+// ============================================================
+// Layout: splitters redimensionables + lock fijo/libre
+// ============================================================
+
+function initSplitters() {
+  // Rangos como funciones para que se adapten al tamaño de la ventana actual.
+  setupSplit('splitter-lr',      'x', '--left-w',
+    320,
+    () => Math.max(360, window.innerWidth - 520));
+  setupSplit('splitter-mission', 'y', '--mission-h',
+    80,
+    () => Math.max(120, window.innerHeight - 320));
+}
+
+function setupSplit(id, axis, varName, min, max) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let dragging = false;
+  let startCoord = 0;
+  let startSize = 0;
+
+  const getMin = () => (typeof min === 'function' ? min() : min);
+  const getMax = () => (typeof max === 'function' ? max() : max);
+
+  function readVar() {
+    // Resolvemos contra el contenedor real del :root, en píxeles.
+    // Para --mission-h, el default es 42vh — lo convertimos leyendo el offsetHeight.
+    const inline = document.documentElement.style.getPropertyValue(varName).trim();
+    if (inline.endsWith('px')) return parseInt(inline, 10) || 0;
+    // Sin valor inline: medimos el panel real
+    if (varName === '--left-w') {
+      return document.getElementById('left-panel').offsetWidth;
+    }
+    if (varName === '--mission-h') {
+      return document.getElementById('mission').offsetHeight;
+    }
+    return 0;
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    const cur = axis === 'x' ? e.clientX : e.clientY;
+    const delta = cur - startCoord;
+    let next = startSize + delta;
+    next = Math.max(getMin(), Math.min(getMax(), next));
+    document.documentElement.style.setProperty(varName, next + 'px');
+    if (cm) cm.refresh();
+  }
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    if (cm) cm.refresh();
+    saveSplitterSizes();
+  }
+  el.addEventListener('mousedown', e => {
+    if (isLayoutLocked()) return;
+    dragging = true;
+    startCoord = axis === 'x' ? e.clientX : e.clientY;
+    startSize = readVar();
+    el.classList.add('dragging');
+    document.body.style.cursor = axis === 'x' ? 'col-resize' : 'row-resize';
+    document.body.style.userSelect = 'none';
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    e.preventDefault();
+  });
+  // Doble click → resetear al default del CSS
+  el.addEventListener('dblclick', () => {
+    if (isLayoutLocked()) return;
+    document.documentElement.style.removeProperty(varName);
+    if (cm) cm.refresh();
+    saveSplitterSizes();
+  });
+}
+
+function saveSplitterSizes() {
+  try {
+    const root = document.documentElement;
+    const sizes = {};
+    ['--left-w', '--mission-h'].forEach(v => {
+      const inline = root.style.getPropertyValue(v).trim();
+      if (inline) sizes[v] = inline;
+    });
+    localStorage.setItem(STORAGE.splitters, JSON.stringify(sizes));
+  } catch (e) {}
+}
+
+function loadSplitterSizes() {
+  try {
+    const raw = localStorage.getItem(STORAGE.splitters);
+    if (!raw) return;
+    const sizes = JSON.parse(raw);
+    const root = document.documentElement;
+    // Saneamiento — recortamos si el valor guardado pasa del max actual
+    const maxes = {
+      '--left-w':    Math.max(360, window.innerWidth  - 520),
+      '--mission-h': Math.max(120, window.innerHeight - 320),
+    };
+    Object.entries(sizes).forEach(([k, v]) => {
+      const px = parseInt(v, 10) || 0;
+      const safe = maxes[k] ? Math.min(px, maxes[k]) : px;
+      root.style.setProperty(k, safe + 'px');
+    });
+  } catch (e) {}
+}
+
+function isLayoutLocked() {
+  return localStorage.getItem(STORAGE.layoutLocked) === '1';
+}
+function setLayoutLocked(on) {
+  localStorage.setItem(STORAGE.layoutLocked, on ? '1' : '0');
+  applyLayoutLock();
+}
+function toggleLayoutLock() {
+  setLayoutLocked(!isLayoutLocked());
+}
+function applyLayoutLock() {
+  const locked = isLayoutLocked();
+  document.body.classList.toggle('layout-locked', locked);
+  const icon  = document.getElementById('layout-lock-icon');
+  const label = document.getElementById('layout-lock-label');
+  if (icon)  icon.textContent  = locked ? '🔒' : '🔓';
+  if (label) label.textContent = locked ? 'FIJO' : 'LIBRE';
 }

@@ -292,6 +292,9 @@
         <button id="cheatsheet-open-btn" class="theory-toggle-btn" title="Abrir cheatsheet — referencia rápida (Ctrl+K)">
           <span>📚</span><span>CHEAT</span>
         </button>
+        <button id="layout-lock-btn" class="theory-toggle-btn" title="Bloquear/desbloquear el redimensionado de paneles">
+          <span id="layout-lock-icon">🔓</span><span id="layout-lock-label">LIBRE</span>
+        </button>
       </div>
       <div id="level-nav">
         <button id="prev-level" title="Nivel anterior">◀</button>
@@ -301,7 +304,7 @@
 
     <main>
       <section id="left-panel">
-        <div id="mission">
+        <div id="mission" data-resize-id="mission">
           <h2>Misión</h2>
           <p id="mission-text">...</p>
           <h3>Concepto del nivel</h3>
@@ -331,6 +334,7 @@
           </div>
           <p class="help-note">La capa siguiente se desbloquea solo cuando consultas la anterior. Intenta resolver con la capa más baja posible.</p>
         </div>
+        <div class="splitter splitter-h" id="splitter-mission" title="Arrastra para redimensionar — doble click para reset"></div>
         <div id="editor-wrap">
           <textarea id="code-editor"></textarea>
         </div>
@@ -343,6 +347,8 @@
           <button id="reset-btn" title="Volver al template inicial">↺ Reset</button>
         </div>
       </section>
+
+      <div class="splitter splitter-v" id="splitter-lr" title="Arrastra para redimensionar — doble click para reset"></div>
 
       <section id="right-panel">
         <canvas id="game-canvas" width="768" height="512"></canvas>
