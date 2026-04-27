@@ -92,7 +92,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
   document.getElementById('next-level').addEventListener('click', () => {
     if (game.playing) return;
-    if (currentLevel < LEVELS.length - 1) loadLevelByIndex(currentLevel + 1, false);
+    if (currentLevel >= LEVELS.length - 1) return;
+    const max = parseInt(localStorage.getItem(STORAGE.maxLevel) || '0', 10);
+    const nextLvl = LEVELS[currentLevel + 1];
+    // Bloqueado si el siguiente nivel está por encima del progreso del jugador
+    if (nextLvl.id > max + 1) {
+      log('Esa operación está bloqueada — completa la actual primero.', 'err');
+      return;
+    }
+    loadLevelByIndex(currentLevel + 1, false);
   });
   document.getElementById('hint-toggle').addEventListener('click', () => {
     const h = document.getElementById('hint-text');
@@ -618,8 +626,15 @@ function loadLevelByIndex(idx, showIntro = false) {
   log(`Nivel ${lvl.id}: ${lvl.title}`, 'info');
   log(`Lugar: ${lvl.location}`, 'log');
 
+  const maxCompleted = parseInt(localStorage.getItem(STORAGE.maxLevel) || '0', 10);
+  const nextLvl = LEVELS[idx + 1];
   document.getElementById('prev-level').disabled = (idx === 0);
-  document.getElementById('next-level').disabled = (idx === LEVELS.length - 1);
+  document.getElementById('next-level').disabled =
+    (idx === LEVELS.length - 1) || (nextLvl && nextLvl.id > maxCompleted + 1);
+  document.getElementById('next-level').title =
+    (nextLvl && nextLvl.id > maxCompleted + 1)
+      ? 'Bloqueada — completa esta operación primero'
+      : 'Operación siguiente';
 
   localStorage.setItem(STORAGE.lastLevel, String(idx));
 
