@@ -184,6 +184,7 @@
             <button class="menu-btn" id="btn-levelselect">🗺 Selección de nivel</button>
             <button class="menu-btn" id="btn-diary">📓 Diario de Aldric</button>
             <button class="menu-btn" id="btn-story">📖 Historia completa</button>
+            <button class="menu-btn" id="btn-glossary">🔤 Glosario</button>
           </div>
         </nav>
       </div>
@@ -252,6 +253,19 @@
     <div id="story-content" class="readable"></div>
   </section>
 
+  <!-- ======= GLOSARIO (PÁGINA COMPLETA) ======= -->
+  <section id="screen-glossary" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" data-back>◀ Menú</button>
+      <h2>🔤 Glosario</h2>
+    </header>
+    <div class="glossary-search-wrap">
+      <input type="text" id="glossary-search" placeholder="Buscar término (ej: variable, lista, bucle, función)…" autocomplete="off">
+      <span id="glossary-count" class="glossary-count"></span>
+    </div>
+    <div id="glossary-content" class="readable"></div>
+  </section>
+
   <!-- ======= JUEGO ======= -->
   <section id="screen-game" class="screen">
     <header>
@@ -275,6 +289,9 @@
           <span class="theory-icon">📖</span>
           <span id="theory-state">ON</span>
         </button>
+        <button id="cheatsheet-open-btn" class="theory-toggle-btn" title="Abrir cheatsheet — referencia rápida (Ctrl+K)">
+          <span>📚</span><span>CHEAT</span>
+        </button>
       </div>
       <div id="level-nav">
         <button id="prev-level" title="Nivel anterior">◀</button>
@@ -289,12 +306,30 @@
           <p id="mission-text">...</p>
           <h3>Concepto del nivel</h3>
           <div id="concept-pill" class="pill"></div>
-          <h3>Ayuda
-            <button id="theory-hint-btn" class="mini-btn">📖 teoría</button>
-            <button id="hint-toggle" class="mini-btn">💡 código</button>
-          </h3>
-          <div id="theory-hint-text" class="hint-theory hidden"></div>
-          <pre id="hint-text" class="hidden"></pre>
+          <h3>Ayuda — pulsa en orden, cada capa desbloquea la siguiente</h3>
+          <div class="hint-tiers">
+            <button class="tier-btn" data-tier="theory" id="tier-btn-theory" title="Concepto explicado a fondo">
+              <span class="tier-icon">📖</span>
+              <span class="tier-label">Teoría</span>
+              <span class="tier-tag" id="tier-tag-theory"></span>
+            </button>
+            <button class="tier-btn" data-tier="strategy" id="tier-btn-strategy" title="Pseudocódigo paso a paso (sin Python)">
+              <span class="tier-icon">🧭</span>
+              <span class="tier-label">Estrategia</span>
+              <span class="tier-tag" id="tier-tag-strategy"></span>
+            </button>
+            <button class="tier-btn" data-tier="skeleton" id="tier-btn-skeleton" title="Código con huecos para rellenar">
+              <span class="tier-icon">🪜</span>
+              <span class="tier-label">Esqueleto</span>
+              <span class="tier-tag" id="tier-tag-skeleton"></span>
+            </button>
+            <button class="tier-btn" data-tier="solution" id="tier-btn-solution" title="Solución completa comentada">
+              <span class="tier-icon">💡</span>
+              <span class="tier-label">Solución</span>
+              <span class="tier-tag" id="tier-tag-solution"></span>
+            </button>
+          </div>
+          <p class="help-note">La capa siguiente se desbloquea solo cuando consultas la anterior. Intenta resolver con la capa más baja posible.</p>
         </div>
         <div id="editor-wrap">
           <textarea id="code-editor"></textarea>
@@ -360,12 +395,44 @@
         <pre class="solution-code" id="solution-code"></pre>
       </div>
       <div class="overlay-buttons">
+        <button id="complete-stay" title="Cerrar y revisar la consola/canvas a tu ritmo">📺 Revisar pantalla</button>
         <button id="complete-replay">↺ Repetir</button>
         <button id="complete-menu">◀ Menú</button>
         <button id="complete-next" class="primary">Siguiente nivel ▶</button>
       </div>
     </div>
   </div>
+
+  <!-- ======= OVERLAY: AYUDA EN 4 TIERS ======= -->
+  <div id="overlay-hint" class="overlay hidden">
+    <div class="overlay-content hint-overlay">
+      <div class="overlay-tag" id="hint-overlay-tag">📖 TEORÍA</div>
+      <h2 id="hint-overlay-title">…</h2>
+      <div class="hint-overlay-body" id="hint-overlay-body"></div>
+      <div class="overlay-buttons">
+        <button id="hint-overlay-close" class="primary">Cerrar (Esc / Enter)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= OVERLAY: CHEATSHEET ======= -->
+  <div id="overlay-cheatsheet" class="overlay hidden">
+    <div class="overlay-content cheatsheet-overlay">
+      <div class="cheatsheet-header">
+        <span class="cheatsheet-title">📚 Cheatsheet</span>
+        <div class="cheatsheet-tabs">
+          <button class="cheat-tab active" data-cheat-tab="api">API del héroe</button>
+          <button class="cheat-tab" data-cheat-tab="syntax">Sintaxis Python</button>
+          <button class="cheat-tab" data-cheat-tab="errors">Errores comunes</button>
+        </div>
+        <button class="cheat-close" id="cheatsheet-modal-close" title="Cerrar (Esc)">✕</button>
+      </div>
+      <div id="cheatsheet-modal-body" class="cheatsheet-body"></div>
+    </div>
+  </div>
+
+  <!-- ======= TOOLTIP DE GLOSARIO ======= -->
+  <div id="glossary-tooltip" class="glossary-tooltip hidden" role="tooltip"></div>
 
   <!-- ======= OVERLAY: GAME OVER ======= -->
   <div id="overlay-gameover" class="overlay hidden">
@@ -421,7 +488,10 @@
 
 <script src="js/sprites.js"></script>
 <script src="js/levels.js"></script>
+<script src="js/theories.js"></script>
 <script src="js/tutorial.js"></script>
+<script src="js/cheatsheet.js"></script>
+<script src="js/glossary.js"></script>
 <script src="js/game.js"></script>
 <script src="js/runner.js"></script>
 <script src="js/main.js"></script>

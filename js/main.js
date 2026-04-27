@@ -14,6 +14,18 @@ const STORAGE = {
   adventures: 'codeaventura_adventures',
   theoryEnabled: 'codeaventura_theory_enabled',
   livesEnabled: 'codeaventura_lives_enabled',
+  // ---- Sistema pedagógico (4-tier hints + cheatsheet)
+  hintsSeen: id => `codeaventura_hints_seen_${id}`,
+  cheatsheetTab: 'codeaventura_cheatsheet_tab',
+};
+
+// Orden canónico de los tiers de pista (de menor a mayor revelación)
+const TIER_ORDER = ['theory', 'strategy', 'skeleton', 'solution'];
+const TIER_LABELS = {
+  theory:   { tag: '📖 TEORÍA',     title: 'Teoría — concepto y por qué' },
+  strategy: { tag: '🧭 ESTRATEGIA', title: 'Estrategia — pasos en lenguaje natural' },
+  skeleton: { tag: '🪜 ESQUELETO',  title: 'Esqueleto — código con huecos' },
+  solution: { tag: '💡 SOLUCIÓN',   title: 'Solución de referencia' },
 };
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -102,37 +114,78 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     loadLevelByIndex(currentLevel + 1, false);
   });
-  document.getElementById('hint-toggle').addEventListener('click', () => {
-    const h = document.getElementById('hint-text');
-    const btn = document.getElementById('hint-toggle');
-    h.classList.toggle('hidden');
-    btn.textContent = h.classList.contains('hidden') ? '💡 código' : '💡 ocultar';
+  // 4-tier hints
+  document.querySelectorAll('.tier-btn').forEach(btn => {
+    btn.addEventListener('click', () => openHintOverlay(btn.dataset.tier));
   });
-  document.getElementById('theory-hint-btn').addEventListener('click', () => {
-    const t = document.getElementById('theory-hint-text');
-    const btn = document.getElementById('theory-hint-btn');
-    t.classList.toggle('hidden');
-    btn.textContent = t.classList.contains('hidden') ? '📖 teoría' : '📖 ocultar';
+  document.getElementById('hint-overlay-close').addEventListener('click', () => {
+    document.getElementById('overlay-hint').classList.add('hidden');
+  });
+
+  // Cheatsheet (modal)
+  document.getElementById('cheatsheet-open-btn').addEventListener('click', openCheatsheetModal);
+  document.getElementById('cheatsheet-modal-close').addEventListener('click', () => {
+    document.getElementById('overlay-cheatsheet').classList.add('hidden');
+  });
+  document.querySelectorAll('.cheat-tab').forEach(tab => {
+    tab.addEventListener('click', () => setCheatsheetTab(tab.dataset.cheatTab));
+  });
+
+  // Glosario
+  document.getElementById('btn-glossary').addEventListener('click', () => {
+    renderGlossaryScreen();
+    setScreen('screen-glossary');
+  });
+  const glossarySearch = document.getElementById('glossary-search');
+  if (glossarySearch) glossarySearch.addEventListener('input', () => renderGlossaryScreen());
+  // Click en links internos del glosario (entradas relacionadas)
+  document.getElementById('glossary-content').addEventListener('click', (ev) => {
+    const a = ev.target.closest && ev.target.closest('a[href^="#gl-"]');
+    if (!a) return;
+    ev.preventDefault();
+    const targetId = a.getAttribute('href').slice(1);
+    const search = document.getElementById('glossary-search');
+    if (search && search.value) { search.value = ''; renderGlossaryScreen(); }
+    setTimeout(() => {
+      const target = document.getElementById(targetId);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 30);
+  });
+  // Tooltip de glosario (delegado a document)
+  document.addEventListener('mouseover', onGlossaryHover);
+  document.addEventListener('mouseout', onGlossaryUnhover);
+  document.addEventListener('click', onGlossaryClick);
+
+  // Botón "Revisar pantalla" del overlay de completado
+  document.getElementById('complete-stay').addEventListener('click', () => {
+    document.getElementById('overlay-complete').classList.add('hidden');
+    setStatus('Revisando. Ejecuta otra vez (▶) para volver a ver el resumen.');
   });
 
   // Atajos
   document.addEventListener('keydown', (ev) => {
     if (ev.ctrlKey && ev.key === 'Enter') {
       ev.preventDefault();
+      if (document.getElementById('screen-game').classList.contains('active')) onRun();
+      return;
+    }
+    // Ctrl+K abre el cheatsheet (solo en pantalla de juego)
+    if (ev.ctrlKey && (ev.key === 'k' || ev.key === 'K')) {
       if (document.getElementById('screen-game').classList.contains('active')) {
-        onRun();
+        ev.preventDefault();
+        openCheatsheetModal();
       }
       return;
     }
     if (ev.key === 'Escape') {
       hideAllOverlays();
+      hideGlossaryTooltip();
       return;
     }
     // Enter en overlays con botón primario → equivale a clicar el botón
-    // (se prioriza overlays sobre el editor: cuando hay overlay visible,
-    // Enter avanza incluso si el foco está dentro del CodeMirror)
     if (ev.key === 'Enter' && !ev.ctrlKey && !ev.shiftKey && !ev.altKey) {
       const overlays = [
+        { id: 'overlay-hint',        primary: 'hint-overlay-close' },
         { id: 'overlay-complete',    primary: 'complete-next' },
         { id: 'overlay-intro',       primary: 'intro-start' },
         { id: 'overlay-exam-intro',  primary: 'exam-start' },
@@ -579,30 +632,15 @@ function loadLevelByIndex(idx, showIntro = false) {
   document.getElementById('level-num').textContent = lvl.id;
   document.getElementById('level-title').textContent = lvl.title;
   document.getElementById('level-location').textContent = '— ' + lvl.location;
-  document.getElementById('mission-text').textContent = lvl.mission;
-  document.getElementById('hint-text').textContent = lvl.hint;
-  document.getElementById('hint-text').classList.add('hidden');
-  document.getElementById('hint-toggle').textContent = '💡 código';
+  // Mission decorada con tooltips de glosario, preserva saltos de línea
+  const missionEl = document.getElementById('mission-text');
+  const missionHtml = escapeHtml(lvl.mission || '').replace(/\n/g, '<br>');
+  missionEl.innerHTML = (typeof decorateGlossaryTerms === 'function')
+    ? decorateGlossaryTerms(missionHtml)
+    : missionHtml;
 
-  // Pista nivel 1: teoría (explicación sin código) usando THEORIES[lvl.id]
-  const theoryHintEl = document.getElementById('theory-hint-text');
-  const theoryHintBtn = document.getElementById('theory-hint-btn');
-  const t = (typeof THEORIES !== 'undefined') ? THEORIES[lvl.id] : null;
-  theoryHintEl.innerHTML = t ? t.body : '';
-  theoryHintEl.classList.add('hidden');
-  theoryHintBtn.textContent = '📖 teoría';
-
-  // En exámenes, ambos niveles de ayuda bloqueados
-  const hintToggle = document.getElementById('hint-toggle');
-  if (lvl.is_exam) {
-    hintToggle.textContent = '🔒 bloqueada';
-    hintToggle.disabled = true;
-    theoryHintBtn.textContent = '🔒 bloqueada';
-    theoryHintBtn.disabled = true;
-  } else {
-    hintToggle.disabled = false;
-    theoryHintBtn.disabled = !t;  // si no hay teoría definida, bloquea solo el de teoría
-  }
+  // Sistema de 4 tiers — actualizar el panel de ayuda
+  refreshTierButtons(lvl);
 
   // Restricciones del examen
   const restPanel = document.getElementById('restrictions-panel');
@@ -876,4 +914,229 @@ function clearConsole() {
 }
 function setStatus(msg) {
   document.getElementById('status-msg').textContent = msg;
+}
+
+// ============================================================
+// SISTEMA DE PISTAS EN 4 CAPAS
+//   theory   → THEORIES[lvl.id]   (en theories.js)
+//   strategy → lvl.strategy       (string, pseudocódigo plano)
+//   skeleton → lvl.skeleton       (string, código con [TODO])
+//   solution → lvl.hint           (string, solución completa)
+// ============================================================
+
+function getTierContent(lvl, tier) {
+  if (tier === 'theory') {
+    const t = (typeof THEORIES !== 'undefined') ? THEORIES[lvl.id] : null;
+    return t ? { title: t.title || lvl.concept || 'Teoría', html: t.body || '' } : null;
+  }
+  if (tier === 'strategy') {
+    if (!lvl.strategy) return null;
+    return { title: 'Estrategia para este nivel', html: '<pre>' + escapeHtml(lvl.strategy) + '</pre>' };
+  }
+  if (tier === 'skeleton') {
+    if (!lvl.skeleton) return null;
+    return { title: 'Esqueleto — rellena los [TODO]', html: '<pre>' + escapeHtml(lvl.skeleton) + '</pre>' };
+  }
+  if (tier === 'solution') {
+    if (!lvl.hint) return null;
+    return { title: 'Solución de referencia', html: '<pre>' + escapeHtml(lvl.hint) + '</pre>' };
+  }
+  return null;
+}
+
+function getTiersSeen(levelId) {
+  try {
+    const raw = localStorage.getItem(STORAGE.hintsSeen(levelId));
+    const arr = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch (e) { return new Set(); }
+}
+function markTierSeen(levelId, tier) {
+  const set = getTiersSeen(levelId);
+  set.add(tier);
+  localStorage.setItem(STORAGE.hintsSeen(levelId), JSON.stringify([...set]));
+}
+
+function refreshTierButtons(lvl) {
+  const seen = getTiersSeen(lvl.id);
+  TIER_ORDER.forEach((tier, idx) => {
+    const btn = document.getElementById('tier-btn-' + tier);
+    const tag = document.getElementById('tier-tag-' + tier);
+    if (!btn) return;
+    const content = getTierContent(lvl, tier);
+    const exists = !!content;
+
+    btn.classList.remove('locked', 'unlocked', 'seen', 'exam-blocked');
+    btn.disabled = false;
+
+    if (lvl.is_exam) {
+      btn.classList.add('exam-blocked');
+      btn.disabled = true;
+      tag.textContent = 'bloq.';
+      return;
+    }
+    if (!exists) {
+      btn.classList.add('locked');
+      btn.disabled = true;
+      tag.textContent = 'no disp.';
+      return;
+    }
+    const prevTier = idx > 0 ? TIER_ORDER[idx - 1] : null;
+    const prevSeenOrAbsent = !prevTier || seen.has(prevTier);
+    if (!prevSeenOrAbsent) {
+      btn.classList.add('locked');
+      btn.disabled = true;
+      tag.textContent = 'usa la anterior';
+      return;
+    }
+    if (seen.has(tier)) {
+      btn.classList.add('seen');
+      tag.textContent = 'visto';
+    } else {
+      btn.classList.add('unlocked');
+      tag.textContent = 'pulsa';
+    }
+  });
+}
+
+function openHintOverlay(tier) {
+  const lvl = (typeof game !== 'undefined' && game.level) ? game.level : LEVELS[currentLevel];
+  if (!lvl || lvl.is_exam) return;
+  const content = getTierContent(lvl, tier);
+  if (!content) return;
+
+  // Comprobar desbloqueo
+  const idx = TIER_ORDER.indexOf(tier);
+  if (idx > 0) {
+    const seen = getTiersSeen(lvl.id);
+    const prev = TIER_ORDER[idx - 1];
+    const prevContent = getTierContent(lvl, prev);
+    if (prevContent && !seen.has(prev)) {
+      log(`Capa "${TIER_LABELS[tier].tag}" bloqueada — usa antes "${TIER_LABELS[prev].tag}".`, 'err');
+      return;
+    }
+  }
+
+  const overlay = document.getElementById('overlay-hint');
+  const tag = document.getElementById('hint-overlay-tag');
+  const title = document.getElementById('hint-overlay-title');
+  const body = document.getElementById('hint-overlay-body');
+
+  tag.textContent = TIER_LABELS[tier].tag;
+  const palette = {
+    theory:   { bg: 'var(--cyan)',  fg: '#04101c' },
+    strategy: { bg: '#fbbf24',      fg: '#1f1308' },
+    skeleton: { bg: '#a78bfa',      fg: '#0f071c' },
+    solution: { bg: '#f87171',      fg: '#240b0b' },
+  }[tier];
+  tag.style.background = palette.bg;
+  tag.style.color = palette.fg;
+
+  title.textContent = content.title;
+  body.dataset.tier = tier;
+  body.innerHTML = (typeof decorateGlossaryTerms === 'function')
+    ? decorateGlossaryTerms(content.html)
+    : content.html;
+
+  markTierSeen(lvl.id, tier);
+  refreshTierButtons(lvl);
+
+  overlay.classList.remove('hidden');
+  setTimeout(() => document.getElementById('hint-overlay-close').focus(), 50);
+}
+
+// ============================================================
+// CHEATSHEET (overlay modal)
+// ============================================================
+
+function getCheatsheetTab() {
+  return localStorage.getItem(STORAGE.cheatsheetTab) || 'api';
+}
+function setCheatsheetTab(tab) {
+  localStorage.setItem(STORAGE.cheatsheetTab, tab);
+  document.querySelectorAll('.cheat-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.cheatTab === tab);
+  });
+  const body = document.getElementById('cheatsheet-modal-body');
+  if (body && typeof renderCheatsheetTab === 'function') {
+    body.innerHTML = renderCheatsheetTab(tab);
+  }
+}
+function openCheatsheetModal() {
+  document.getElementById('overlay-cheatsheet').classList.remove('hidden');
+  setCheatsheetTab(getCheatsheetTab());
+}
+
+// ============================================================
+// GLOSARIO — tooltips + página
+// ============================================================
+
+let _glossaryHoverTarget = null;
+let _glossaryHoverTimer = null;
+
+function onGlossaryHover(ev) {
+  const el = ev.target.closest && ev.target.closest('.glossary-term');
+  if (!el) return;
+  _glossaryHoverTarget = el;
+  clearTimeout(_glossaryHoverTimer);
+  _glossaryHoverTimer = setTimeout(() => showGlossaryTooltip(el), 120);
+}
+function onGlossaryUnhover(ev) {
+  const el = ev.target.closest && ev.target.closest('.glossary-term');
+  if (!el || el !== _glossaryHoverTarget) return;
+  _glossaryHoverTarget = null;
+  clearTimeout(_glossaryHoverTimer);
+  hideGlossaryTooltip();
+}
+function onGlossaryClick(ev) {
+  const el = ev.target.closest && ev.target.closest('.glossary-term');
+  if (!el) return;
+  const term = el.dataset.term;
+  if (!term) return;
+  ev.preventDefault();
+  hideGlossaryTooltip();
+  renderGlossaryScreen();
+  setScreen('screen-glossary');
+  setTimeout(() => {
+    const target = document.getElementById('gl-' + term.replace(/[^a-zA-Z0-9_-]/g, '_'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 60);
+}
+function showGlossaryTooltip(el) {
+  if (typeof getGlossaryEntry !== 'function') return;
+  const term = el.dataset.term;
+  const entry = getGlossaryEntry(term);
+  if (!entry) return;
+  const tt = document.getElementById('glossary-tooltip');
+  if (!tt) return;
+  tt.innerHTML = `<strong>${escapeHtml(term)}</strong><br>${entry.short || ''}
+    <span class="glossary-tooltip-link">click → glosario completo</span>`;
+  tt.classList.remove('hidden');
+  const rect = el.getBoundingClientRect();
+  const ttw = tt.offsetWidth;
+  const tth = tt.offsetHeight;
+  let left = rect.left + rect.width / 2 - ttw / 2;
+  let top = rect.bottom + 8;
+  if (left < 8) left = 8;
+  if (left + ttw > window.innerWidth - 8) left = window.innerWidth - ttw - 8;
+  if (top + tth > window.innerHeight - 8) top = rect.top - tth - 8;
+  tt.style.left = left + 'px';
+  tt.style.top  = top + 'px';
+}
+function hideGlossaryTooltip() {
+  const tt = document.getElementById('glossary-tooltip');
+  if (tt) tt.classList.add('hidden');
+}
+function renderGlossaryScreen() {
+  if (typeof renderGlossaryPage !== 'function') return;
+  const search = document.getElementById('glossary-search');
+  const filter = search ? search.value : '';
+  const html = renderGlossaryPage(filter);
+  const container = document.getElementById('glossary-content');
+  if (container) container.innerHTML = html;
+  if (typeof getGlossaryStats === 'function') {
+    const stats = getGlossaryStats();
+    const cnt = document.getElementById('glossary-count');
+    if (cnt) cnt.textContent = `${stats.total} términos`;
+  }
 }
