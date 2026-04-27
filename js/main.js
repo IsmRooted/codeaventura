@@ -254,7 +254,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   loadSplitterSizes();
   initSplitters();
   applyLayoutLock();
-  document.getElementById('layout-lock-btn').addEventListener('click', toggleLayoutLock);
+  const lockBtn = document.getElementById('layout-lock-btn');
+  if (lockBtn) lockBtn.addEventListener('click', toggleLayoutLock);
 
   // Pyodide
   setMenuStatus('Cargando Python (Pyodide)... 5-15s la primera vez.');
@@ -1156,9 +1157,15 @@ function initSplitters() {
   setupSplit('splitter-mission', 'y', '--mission-h',
     80,
     () => Math.max(120, window.innerHeight - 320));
+  // El splitter de la consola controla la altura del console (no del canvas):
+  // arrastrar hacia ARRIBA agranda la consola, abajo la encoge. Por eso inverse.
+  setupSplit('splitter-console', 'y', '--console-h',
+    60,
+    () => Math.max(60, window.innerHeight - 220),
+    /* inverse */ true);
 }
 
-function setupSplit(id, axis, varName, min, max) {
+function setupSplit(id, axis, varName, min, max, inverse = false) {
   const el = document.getElementById(id);
   if (!el) return;
   let dragging = false;
@@ -1180,6 +1187,9 @@ function setupSplit(id, axis, varName, min, max) {
     if (varName === '--mission-h') {
       return document.getElementById('mission').offsetHeight;
     }
+    if (varName === '--console-h') {
+      return document.getElementById('console').offsetHeight;
+    }
     return 0;
   }
 
@@ -1187,7 +1197,7 @@ function setupSplit(id, axis, varName, min, max) {
     if (!dragging) return;
     const cur = axis === 'x' ? e.clientX : e.clientY;
     const delta = cur - startCoord;
-    let next = startSize + delta;
+    let next = startSize + (inverse ? -delta : delta);
     next = Math.max(getMin(), Math.min(getMax(), next));
     document.documentElement.style.setProperty(varName, next + 'px');
     if (cm) cm.refresh();
@@ -1228,7 +1238,7 @@ function saveSplitterSizes() {
   try {
     const root = document.documentElement;
     const sizes = {};
-    ['--left-w', '--mission-h'].forEach(v => {
+    ['--left-w', '--mission-h', '--console-h'].forEach(v => {
       const inline = root.style.getPropertyValue(v).trim();
       if (inline) sizes[v] = inline;
     });
@@ -1242,10 +1252,10 @@ function loadSplitterSizes() {
     if (!raw) return;
     const sizes = JSON.parse(raw);
     const root = document.documentElement;
-    // Saneamiento — recortamos si el valor guardado pasa del max actual
     const maxes = {
       '--left-w':    Math.max(360, window.innerWidth  - 520),
       '--mission-h': Math.max(120, window.innerHeight - 320),
+      '--console-h': Math.max(60,  window.innerHeight - 220),
     };
     Object.entries(sizes).forEach(([k, v]) => {
       const px = parseInt(v, 10) || 0;
