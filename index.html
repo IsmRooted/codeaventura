@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodeAventura — Aprende Python en una aventura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/theme/dracula.min.css">
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <!-- ======= MENÚ PRINCIPAL ======= -->
+  <section id="screen-menu" class="screen active">
+    <!-- Fondo medieval ilustrado (SVG) -->
+    <div class="menu-bg" aria-hidden="true">
+      <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stop-color="#0d1126"/>
+            <stop offset="55%" stop-color="#0a0d20"/>
+            <stop offset="100%" stop-color="#070912"/>
+          </linearGradient>
+          <radialGradient id="moonGlow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%"  stop-color="#f0d68a" stop-opacity="0.55"/>
+            <stop offset="55%" stop-color="#f0d68a" stop-opacity="0.12"/>
+            <stop offset="100%" stop-color="#f0d68a" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="windowGlow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%"  stop-color="#f0a942" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#f0a942" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stop-color="#a78bfa" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.06"/>
+          </linearGradient>
+        </defs>
+
+        <rect width="1920" height="1080" fill="url(#sky)"/>
+
+        <!-- Estrellas -->
+        <g fill="#fff">
+          <circle cx="80"   cy="80"  r="0.9" opacity="0.7"/>
+          <circle cx="220"  cy="160" r="0.7" opacity="0.5"/>
+          <circle cx="370"  cy="60"  r="1.0" opacity="0.8"/>
+          <circle cx="540"  cy="200" r="0.6" opacity="0.5"/>
+          <circle cx="700"  cy="100" r="0.9" opacity="0.7"/>
+          <circle cx="860"  cy="180" r="0.7" opacity="0.6"/>
+          <circle cx="1100" cy="60"  r="0.6" opacity="0.5"/>
+          <circle cx="1280" cy="180" r="0.9" opacity="0.7"/>
+          <circle cx="1700" cy="160" r="0.8" opacity="0.6"/>
+          <circle cx="1840" cy="80"  r="0.7" opacity="0.6"/>
+          <circle cx="200"  cy="320" r="0.6" opacity="0.4"/>
+          <circle cx="640"  cy="280" r="0.5" opacity="0.4"/>
+          <circle cx="1080" cy="300" r="0.8" opacity="0.6"/>
+          <circle cx="1440" cy="270" r="0.6" opacity="0.4"/>
+          <circle cx="1620" cy="350" r="0.7" opacity="0.5"/>
+        </g>
+
+        <!-- Luna -->
+        <circle cx="1480" cy="240" r="190" fill="url(#moonGlow)"/>
+        <circle cx="1480" cy="240" r="62"  fill="#f5e7b8" opacity="0.94"/>
+        <circle cx="1470" cy="230" r="6"   fill="#d4c39a" opacity="0.55"/>
+        <circle cx="1492" cy="248" r="4"   fill="#d4c39a" opacity="0.45"/>
+        <circle cx="1475" cy="262" r="5"   fill="#d4c39a" opacity="0.50"/>
+        <circle cx="1500" cy="222" r="3"   fill="#d4c39a" opacity="0.40"/>
+
+        <!-- Cordillera lejana -->
+        <polygon
+          points="0,720 140,510 270,640 410,470 580,610 740,490 900,580 1080,450 1240,560 1400,480 1560,580 1720,510 1920,600 1920,1080 0,1080"
+          fill="#1a1f3a" opacity="0.55"/>
+
+        <!-- Cordillera media -->
+        <polygon
+          points="0,840 200,680 380,790 560,640 740,790 920,700 1100,830 1280,720 1460,810 1640,750 1820,830 1920,800 1920,1080 0,1080"
+          fill="#10142a" opacity="0.78"/>
+
+        <!-- Niebla violeta -->
+        <rect width="1920" height="1080" fill="url(#haze)"/>
+
+        <!-- Castillo / fortaleza (silueta) -->
+        <g fill="#070912">
+          <rect x="850" y="700" width="220" height="220"/>
+          <rect x="820" y="640" width="40"  height="280"/>
+          <rect x="940" y="660" width="44"  height="260"/>
+          <rect x="1060" y="610" width="50" height="310"/>
+          <polygon points="820,640 860,640 840,598"/>
+          <polygon points="938,660 986,660 962,612"/>
+          <polygon points="1058,610 1112,610 1085,562"/>
+          <rect x="820" y="630" width="8"  height="14"/>
+          <rect x="836" y="630" width="8"  height="14"/>
+          <rect x="852" y="630" width="8"  height="14"/>
+          <rect x="1060" y="600" width="9"  height="14"/>
+          <rect x="1077" y="600" width="9"  height="14"/>
+          <rect x="1094" y="600" width="9"  height="14"/>
+          <rect x="850"  y="690" width="14" height="20"/>
+          <rect x="876"  y="690" width="14" height="20"/>
+          <rect x="902"  y="690" width="14" height="20"/>
+          <rect x="998"  y="690" width="14" height="20"/>
+          <rect x="1024" y="690" width="14" height="20"/>
+          <rect x="1050" y="690" width="14" height="20"/>
+          <rect x="945" y="830" width="30" height="90"/>
+          <ellipse cx="960" cy="830" rx="15" ry="18"/>
+        </g>
+
+        <!-- Halos de ventanas -->
+        <g>
+          <ellipse cx="895"  cy="780" rx="48" ry="22" fill="url(#windowGlow)"/>
+          <ellipse cx="995"  cy="780" rx="48" ry="22" fill="url(#windowGlow)"/>
+          <ellipse cx="840"  cy="700" rx="32" ry="18" fill="url(#windowGlow)"/>
+          <ellipse cx="1085" cy="690" rx="38" ry="22" fill="url(#windowGlow)"/>
+          <ellipse cx="960"  cy="730" rx="32" ry="18" fill="url(#windowGlow)"/>
+        </g>
+        <!-- Ventanas brillantes -->
+        <g fill="#f0a942">
+          <rect x="888"  y="772" width="14" height="22" opacity="0.78"/>
+          <rect x="918"  y="772" width="14" height="22" opacity="0.65"/>
+          <rect x="988"  y="772" width="14" height="22" opacity="0.80"/>
+          <rect x="1018" y="772" width="14" height="22" opacity="0.70"/>
+          <rect x="832"  y="694" width="10" height="18" opacity="0.62"/>
+          <rect x="1080" y="684" width="12" height="20" opacity="0.78"/>
+          <rect x="956"  y="724" width="12" height="22" opacity="0.65"/>
+          <rect x="956"  y="820" width="12" height="22" opacity="0.55"/>
+        </g>
+
+        <!-- Banderines -->
+        <g fill="#a78bfa" opacity="0.50">
+          <polygon points="838,640 858,640 858,704 848,694 838,704"/>
+          <polygon points="1080,610 1098,610 1098,672 1089,662 1080,672"/>
+        </g>
+
+        <!-- Colina foreground 1 -->
+        <polygon
+          points="0,940 250,880 500,910 750,870 1000,920 1300,860 1600,900 1920,870 1920,1080 0,1080"
+          fill="#03050c"/>
+        <!-- Colina foreground 2 -->
+        <polygon
+          points="0,1010 320,970 640,990 960,955 1280,985 1600,965 1920,990 1920,1080 0,1080"
+          fill="#000004"/>
+
+        <!-- Pájaros lejanos -->
+        <g stroke="#1a1d35" stroke-width="2" fill="none" opacity="0.65">
+          <path d="M 280 380 q 8 -8 16 0 q 8 -8 16 0"/>
+          <path d="M 340 410 q 6 -6 12 0 q 6 -6 12 0"/>
+          <path d="M 400 360 q 7 -7 14 0 q 7 -7 14 0"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Contenido del menú -->
+    <div class="menu-container">
+      <header class="menu-header">
+        <h1 class="menu-title">⚔ CodeAventura</h1>
+        <p class="menu-subtitle">Aprende Python en una aventura</p>
+      </header>
+
+      <div class="menu-grid">
+        <aside class="menu-lore">
+          <p>
+            El reino de <em>Pythia</em> ha caído bajo el hechizo del
+            <em>Caos Nulo</em>. Las antiguas runas — los conjuros del lenguaje
+            sagrado — se han dispersado por mazmorras y bosques.
+          </p>
+          <p>
+            Eres <strong>Aldric</strong>, aprendiz de la Orden Rúnica. Tu misión:
+            recuperarlas, una a una, y derrotar al Señor del Vacío.
+          </p>
+        </aside>
+
+        <nav class="menu-actions">
+          <button class="menu-btn primary" id="btn-play">
+            ▶ <span id="play-label">Empezar aventura</span>
+          </button>
+          <div class="menu-secondary-grid">
+            <button class="menu-btn" id="btn-tutorial">📜 Aprender Python</button>
+            <button class="menu-btn" id="btn-howto">❓ Cómo jugar</button>
+            <button class="menu-btn" id="btn-levelselect">🗺 Selección de nivel</button>
+            <button class="menu-btn" id="btn-diary">📓 Diario de Aldric</button>
+            <button class="menu-btn" id="btn-story">📖 Historia completa</button>
+          </div>
+        </nav>
+      </div>
+
+      <footer class="menu-footer">
+        <div class="menu-footer-row">
+          <span class="menu-progress">Progreso: <strong id="menu-progress-text">0 / 25</strong></span>
+          <span class="menu-adventures" id="menu-adventures"></span>
+          <div class="menu-medals" id="menu-medals" title="Medallas de los exámenes"></div>
+        </div>
+        <div class="menu-footer-actions">
+          <button class="menu-btn-mini" id="btn-new-adventure" title="Empieza desde el Nivel 1 (mantiene medallas)">
+            🔄 Nueva aventura
+          </button>
+          <span class="menu-status" id="menu-status-msg">Cargando Python...</span>
+        </div>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ======= TUTORIAL ======= -->
+  <section id="screen-tutorial" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" data-back>◀ Menú</button>
+      <h2>📜 Aprender Python</h2>
+    </header>
+    <div class="tutorial-layout">
+      <aside id="tutorial-toc"></aside>
+      <article id="tutorial-content"></article>
+    </div>
+  </section>
+
+  <!-- ======= CÓMO JUGAR ======= -->
+  <section id="screen-howto" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" data-back>◀ Menú</button>
+      <h2>❓ Cómo jugar</h2>
+    </header>
+    <div id="howto-content" class="readable"></div>
+  </section>
+
+  <!-- ======= SELECCIÓN DE NIVEL ======= -->
+  <section id="screen-levelselect" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" data-back>◀ Menú</button>
+      <h2>🗺 Selecciona un nivel</h2>
+    </header>
+    <div id="levelselect-grid"></div>
+  </section>
+
+  <!-- ======= DIARIO ======= -->
+  <section id="screen-diary" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" data-back>◀ Menú</button>
+      <h2>📓 Diario de Aldric</h2>
+    </header>
+    <div id="diary-content" class="readable"></div>
+  </section>
+
+  <!-- ======= HISTORIA ======= -->
+  <section id="screen-story" class="screen">
+    <header class="screen-header">
+      <button class="back-btn" data-back>◀ Menú</button>
+      <h2>📖 La historia de Pythia</h2>
+    </header>
+    <div id="story-content" class="readable"></div>
+  </section>
+
+  <!-- ======= JUEGO ======= -->
+  <section id="screen-game" class="screen">
+    <header>
+      <button class="back-btn" id="game-menu-btn">◀ Menú</button>
+      <h1>⚔ CodeAventura</h1>
+      <div id="level-info">
+        <span class="lvl-badge">Nivel <span id="level-num">1</span></span>
+        <span id="level-title">El primer paso</span>
+        <span id="level-location" class="lvl-location"></span>
+      </div>
+      <div id="game-stats" title="Vidas y pociones">
+        <div id="lives-display" class="lives"></div>
+        <button id="potion-btn" class="potion-btn" title="Usar poción (recupera 1 vida)" disabled>
+          <span class="potion-icon">🧪</span>
+          <span id="potion-count">0</span>
+        </button>
+        <button id="lives-toggle-btn" class="theory-toggle-btn" title="Activar/desactivar el sistema de vidas">
+          <span>❤</span><span id="lives-state">ON</span>
+        </button>
+        <button id="theory-toggle-btn" class="theory-toggle-btn" title="Mostrar/ocultar teoría tras cada nivel">
+          <span class="theory-icon">📖</span>
+          <span id="theory-state">ON</span>
+        </button>
+      </div>
+      <div id="level-nav">
+        <button id="prev-level" title="Nivel anterior">◀</button>
+        <button id="next-level" title="Siguiente nivel">▶</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="left-panel">
+        <div id="mission">
+          <h2>Misión</h2>
+          <p id="mission-text">...</p>
+          <h3>Concepto del nivel</h3>
+          <div id="concept-pill" class="pill"></div>
+          <h3>Ayuda
+            <button id="theory-hint-btn" class="mini-btn">📖 teoría</button>
+            <button id="hint-toggle" class="mini-btn">💡 código</button>
+          </h3>
+          <div id="theory-hint-text" class="hint-theory hidden"></div>
+          <pre id="hint-text" class="hidden"></pre>
+        </div>
+        <div id="editor-wrap">
+          <textarea id="code-editor"></textarea>
+        </div>
+        <div id="restrictions-panel" class="hidden">
+          <h3>⚠ Restricciones del examen</h3>
+          <ul id="restrictions-list"></ul>
+        </div>
+        <div id="controls">
+          <button id="run-btn" disabled>▶ Ejecutar</button>
+          <button id="reset-btn" title="Volver al template inicial">↺ Reset</button>
+        </div>
+      </section>
+
+      <section id="right-panel">
+        <canvas id="game-canvas" width="768" height="512"></canvas>
+        <div id="console">
+          <div id="console-output"></div>
+        </div>
+        <div id="status-bar">
+          <span id="status-msg">Listo.</span>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <!-- ======= OVERLAY: INTRO DE NIVEL ======= -->
+  <div id="overlay-intro" class="overlay hidden">
+    <div class="overlay-content">
+      <div class="overlay-tag" id="intro-location"></div>
+      <h2 id="intro-title"></h2>
+      <p id="intro-story" class="story-text"></p>
+      <div class="intro-meta">
+        <div><strong>Misión:</strong> <span id="intro-mission"></span></div>
+        <div><strong>Concepto nuevo:</strong> <span id="intro-concept"></span></div>
+      </div>
+      <button id="intro-start" class="primary">Comenzar</button>
+    </div>
+  </div>
+
+  <!-- ======= OVERLAY: NIVEL COMPLETADO ======= -->
+  <div id="overlay-complete" class="overlay hidden">
+    <div class="overlay-content">
+      <div class="overlay-tag success">✓ Nivel completado</div>
+      <h2 id="complete-title">¡Bien hecho!</h2>
+      <p id="complete-story" class="story-text"></p>
+      <p class="concept-learned">
+        Has dominado: <span id="complete-concept" class="pill"></span>
+      </p>
+      <div class="theory-block" id="complete-theory">
+        <h3 class="theory-heading">📖 Teoría — <span id="theory-title">...</span></h3>
+        <div class="theory-body" id="theory-body"></div>
+        <label class="theory-toggle-inline">
+          <input type="checkbox" id="theory-disable-checkbox">
+          <span>No mostrar teoría tras cada nivel (puedes reactivarla en el header)</span>
+        </label>
+      </div>
+      <div class="solution-block" id="complete-solution">
+        <button class="solution-toggle" id="solution-toggle" type="button">
+          <span class="solution-arrow">▸</span>
+          <span>Ver solución de referencia</span>
+        </button>
+        <pre class="solution-code" id="solution-code"></pre>
+      </div>
+      <div class="overlay-buttons">
+        <button id="complete-replay">↺ Repetir</button>
+        <button id="complete-menu">◀ Menú</button>
+        <button id="complete-next" class="primary">Siguiente nivel ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= OVERLAY: GAME OVER ======= -->
+  <div id="overlay-gameover" class="overlay hidden">
+    <div class="overlay-content gameover">
+      <div class="overlay-tag" style="background:#e85b5b;">✗ Sin vidas</div>
+      <h2>Has caído</h2>
+      <p class="story-text">
+        Aldric tropieza, exhausto. Los conjuros mal escritos drenan la energía
+        de cualquier mago. Pero la Orden no abandona a los suyos: una mano
+        invisible te lleva al último santuario seguro.
+      </p>
+      <p id="gameover-checkpoint" style="margin-bottom: 18px;"></p>
+      <button id="gameover-continue" class="primary">Volver al checkpoint</button>
+    </div>
+  </div>
+
+  <!-- ======= OVERLAY: EXAMEN INTRO ======= -->
+  <div id="overlay-exam-intro" class="overlay hidden">
+    <div class="overlay-content exam-intro">
+      <div class="overlay-tag exam">⚠ Examen del Capítulo</div>
+      <h2 id="exam-title"></h2>
+      <p id="exam-story" class="story-text"></p>
+      <div class="exam-rules">
+        <h3>Reglas:</h3>
+        <ul id="exam-rules-list"></ul>
+      </div>
+      <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 14px;">
+        En el examen no hay pista. Cada error de Python te cuesta una vida.
+        Si superas el examen, recuperas vidas y aumenta tu máximo.
+      </p>
+      <button id="exam-start" class="primary">Aceptar el examen</button>
+    </div>
+  </div>
+
+  <!-- ======= OVERLAY: FIN DEL JUEGO ======= -->
+  <div id="overlay-victory" class="overlay hidden">
+    <div class="overlay-content victory">
+      <h2>🏆 ¡Has salvado Pythia!</h2>
+      <p class="story-text">
+        Vorthak cae con un grito que retumba por toda la torre. El Caos Nulo se
+        disipa como humo. Las runas vuelven a brillar en los muros del reino.
+        Aldric, ya no aprendiz, sino <strong>Mago Rúnico</strong>, baja la espada.
+        Has aprendido los fundamentos de Python. Pero esto era solo el principio…
+      </p>
+      <div class="overlay-buttons">
+        <button id="victory-menu">Volver al menú</button>
+        <button id="victory-restart" class="primary">🔄 Nueva aventura</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/sprites.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/tutorial.js"></script>
+<script src="js/game.js"></script>
+<script src="js/runner.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
