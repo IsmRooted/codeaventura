@@ -10,8 +10,10 @@ const TUTORIAL = [
       y la máquina las ejecuta de arriba a abajo, una por una.</p>
       <p>En este juego, escribes Python real. Cada vez que pulsas
       <strong>▶ Ejecutar</strong>, tu código corre y mueve al héroe.</p>
-      <p>Esta sección cubre los fundamentos que necesitas para los 11 niveles.
-      Léela del tirón o consúltala cuando te atasques.</p>
+      <p>Esta sección cubre los fundamentos que necesitas para los 25 niveles
+      de la aventura. Léela del tirón o consúltala cuando te atasques —
+      también la tienes a mano dentro del juego en el botón
+      <strong>📚 CHEAT</strong> (o <code>Ctrl+K</code>).</p>
       <h4>Reglas de oro</h4>
       <ul>
         <li>Python distingue mayúsculas: <code>Hero</code> y <code>hero</code> son distintos.</li>
@@ -368,20 +370,42 @@ const HOWTO_CONTENT = `
   entre sesiones.</p>
 
   <h3>Atajos de teclado</h3>
-  <ul>
-    <li><code>Ctrl + Enter</code> — Ejecutar código</li>
-    <li><code>Tab</code> en el editor — Indentar (4 espacios)</li>
-  </ul>
+  <table style="font-size:13px;">
+    <tr><td><code>Ctrl + Enter</code></td><td>Ejecutar el código</td></tr>
+    <tr><td><code>Ctrl + K</code></td><td>Abrir el cheatsheet (referencia rápida)</td></tr>
+    <tr><td><code>Esc</code></td><td>Cerrar el overlay activo</td></tr>
+    <tr><td><code>Tab</code> en el editor</td><td>Indentar (4 espacios)</td></tr>
+  </table>
 
-  <h3>¿Atascado?</h3>
-  <p>Cada nivel tiene un botón <em>"mostrar"</em> al lado de la palabra
-  <strong>Pista</strong>. Te enseña una sugerencia de código. También puedes
-  consultar la sección <strong>📜 Aprender Python</strong> desde el menú.</p>
+  <h3>¿Atascado? — Sistema de pista en 4 capas</h3>
+  <p>En cada nivel verás 4 botones bajo "Ayuda". Se desbloquean en orden — el
+  siguiente solo se activa cuando consultas el anterior. Empieza siempre por
+  la capa más baja que necesites:</p>
+  <ol>
+    <li><strong>📖 Teoría</strong> — concepto Python explicado a fondo.</li>
+    <li><strong>🧭 Estrategia</strong> — pseudocódigo paso a paso (sin sintaxis Python).</li>
+    <li><strong>🪜 Esqueleto</strong> — código con huecos <code>[TODO: ...]</code> para rellenar.</li>
+    <li><strong>💡 Solución</strong> — código completo comentado (último recurso).</li>
+  </ol>
+  <p>En los niveles examen las 4 capas están bloqueadas — solo briefing y datos.</p>
+
+  <h3>Referencias siempre disponibles</h3>
+  <ul>
+    <li><strong>📚 Cheatsheet</strong> (<code>Ctrl+K</code> o botón del header) —
+        referencia rápida con 23 entradas: API del héroe, sintaxis Python,
+        errores comunes y cómo resolverlos.</li>
+    <li><strong>🔤 Glosario</strong> (botón en el menú) — 31 términos técnicos
+        (variable, lista, función, bucle, …). Aparecen subrayados en los
+        briefings; pasa el cursor para ver una definición rápida.</li>
+    <li><strong>📜 Aprender Python</strong> (botón en el menú) — manual técnico
+        de fundamentos. Léelo del tirón al empezar o consúltalo cuando dudes
+        sobre algo de sintaxis.</li>
+  </ul>
 
   <h3>Tu progreso</h3>
   <p>Se guarda automáticamente en tu navegador (localStorage). El código que
   escribas en cada nivel también se guarda — si te sales y vuelves, sigue ahí.
-  El botón <strong>↺ Reset código</strong> restaura el código inicial del
+  El botón <strong>↺ Reset</strong> del editor restaura el código inicial del
   nivel.</p>
 `;
 
