@@ -645,9 +645,11 @@ function loadLevelByIndex(idx, showIntro = false) {
 
   document.getElementById('concept-pill').textContent = lvl.concept;
 
-  // Cargar código (guardado o starter)
+  // Cargar código (guardado o starter). Si el nivel no define starterCode,
+  // usamos el skeleton del sistema pedagógico como plantilla de partida.
+  const starter = lvl.starterCode ?? lvl.skeleton ?? '';
   const savedCode = localStorage.getItem(STORAGE.code(lvl.id));
-  cm.setValue(savedCode !== null ? savedCode : lvl.starterCode);
+  cm.setValue(savedCode !== null ? savedCode : starter);
 
   loadLevel(lvl);
   clearConsole();
@@ -765,7 +767,7 @@ function onReset() {
   if (game.playing) return;
   const lvl = LEVELS[currentLevel];
   if (!confirm('¿Volver al template inicial? Se perderá el código que tienes ahora.')) return;
-  cm.setValue(lvl.starterCode);
+  cm.setValue(lvl.starterCode ?? lvl.skeleton ?? '');
   localStorage.removeItem(STORAGE.code(lvl.id));
   loadLevel(lvl);
   clearConsole();
