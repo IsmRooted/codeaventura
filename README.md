@@ -124,5 +124,4 @@ Posibles ampliaciones futuras (ninguna bloqueante):
 
 ## Inspirado por
 
-- [CodeCombat](https://codecombat.com/) — programar como mecánica central de un juego.
 - Las clásicas mazmorras por turnos sobre grid (Roguelikes).
