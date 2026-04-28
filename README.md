@@ -4,7 +4,7 @@
 
 CodeAventura es un juego educativo en navegador para aprender Python desde cero, ambientado en una aventura de fantasía: la cripta del aprendiz, el bosque torcido, la niebla, la forja y la torre del vacío. Cada nivel se resuelve con código Python real — `print()`, variables, listas, `for`, `if`, `while`, diccionarios, funciones — sobre un grid donde diriges a un héroe.
 
-Todo el código del jugador se ejecuta en un **sandbox dentro del navegador** (Pyodide). Sin servidor, sin cuentas, sin telemetría.
+Todo el código del jugador se ejecuta en un **sandbox dentro del navegador** (Pyodide). Sin servidor, sin cuentas, sin telemetría. Enlace via Github Pages: https://ismrooted.github.io/codeaventura/
 
 ---
 
